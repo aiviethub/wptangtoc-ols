@@ -48,11 +48,11 @@ Hệ điều hành mà mình yêu thích nhất là AlmaLinux 8:
 Bạn paste đoạn mã này vào terminal của bạn rồi phần mềm sẽ tự động thiết lập.
 
 
-<pre>curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols</pre>
+<pre>curl -sO https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/wptangtoc-ols && bash wptangtoc-ols</pre>
 
 Nếu bạn muốn cài đặt luôn sẵn mã nguồn WordPress vào domain luôn thì có thể dùng đoạn này:
 
-<pre>curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols wp</pre>
+<pre>curl -sO https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/wptangtoc-ols curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-olscurl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols bash wptangtoc-ols wp</pre>
 
 Nếu bạn chưa có VPS: thì bạn có thể tìm kiếm một đơn vị cung cấp VPS nào đó mà bạn cảm thấy uy tín bạn có thể thuê ở đó. Để có thể sử dụng công cụ này.
 
