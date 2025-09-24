@@ -153,7 +153,7 @@ else
 fi
 
 if [[ $wptangtocols_version = "" ]]; then
-  wptangtocols_version=$(curl -s https://raw.githubusercontent.com/wptangtoc/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
+  wptangtocols_version=$(curl -s https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
 fi
 
 if [[ $key_activate ]]; then

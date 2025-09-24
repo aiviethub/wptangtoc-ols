@@ -10,7 +10,7 @@ stty iutf8 #từ latin1 sang utf8, nhiều khi anh em dùng bộ gõ tiếng vi�
 version_wptangtoc_ols=$(cat /tmp/wptangtoc-ols-version-main)
 
 if [[ $wptangtocols_version = "" ]];then
-	wptangtocols_version=$(curl -s https://raw.githubusercontent.com/wptangtoc/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
+	wptangtocols_version=$(curl -s https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
 fi
 
 if [[ "$wptangtocols_version" != "$version_wptangtoc_ols" ]]; then
