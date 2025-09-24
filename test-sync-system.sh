@@ -15,7 +15,7 @@ echo -e "${BLUE}[INFO]${NC} Kiểm tra file trên server local..."
 echo ""
 
 # Đếm file trên server
-local_files=$(ls -1 /root/ | wc -l)
+local_files=$(ls -1 /root/aiviethub/ | wc -l)
 echo "📁 Tổng số file trên server: $local_files"
 
 # Kiểm tra các file quan trọng
@@ -38,7 +38,7 @@ important_files=(
 )
 
 for file in "${important_files[@]}"; do
-    if [[ -e "/root/$file" ]]; then
+    if [[ -e "/root/aiviethub/$file" ]]; then
         echo -e "  ✅ $file"
     else
         echo -e "  ❌ $file"
@@ -50,14 +50,14 @@ echo -e "${BLUE}[INFO]${NC} Kiểm tra file trên GitHub..."
 echo ""
 
 # Đếm file trên GitHub
-cd /root/wptangtoc-ols-git
+cd /root/aiviethub/wptangtoc-ols-git
 git_files=$(ls -1 | wc -l)
 echo "📁 Tổng số file trên GitHub: $git_files"
 
 echo ""
 echo "🔍 Kiểm tra file quan trọng trên GitHub:"
 for file in "${important_files[@]}"; do
-    if [[ -e "/root/wptangtoc-ols-git/$file" ]]; then
+    if [[ -e "/root/aiviethub/wptangtoc-ols-git/$file" ]]; then
         echo -e "  ✅ $file"
     else
         echo -e "  ❌ $file"
@@ -69,7 +69,7 @@ echo -e "${BLUE}[INFO]${NC} Kiểm tra trạng thái Git..."
 echo ""
 
 # Kiểm tra trạng thái Git
-cd /root/wptangtoc-ols-git
+cd /root/aiviethub/wptangtoc-ols-git
 git_status=$(git status --porcelain)
 if [[ -z "$git_status" ]]; then
     echo -e "  ✅ Git repository sạch (không có thay đổi chưa commit)"
@@ -106,8 +106,8 @@ echo ""
 echo "🎯 Hệ thống đồng bộ GitHub đã sẵn sàng!"
 echo ""
 echo "📋 Các lệnh hữu ích:"
-echo "  • Đồng bộ từ GitHub về server: /root/sync-from-github.sh force"
-echo "  • Đồng bộ từ server lên GitHub: /root/sync-to-github.sh smart"
-echo "  • Xem trạng thái: /root/sync-from-github.sh compare"
-echo "  • Thiết lập auto sync: /root/sync-to-github.sh setup-cron 2min"
+echo "  • Đồng bộ từ GitHub về server: /root/aiviethub/sync-from-github.sh force"
+echo "  • Đồng bộ từ server lên GitHub: /root/aiviethub/sync-to-github.sh smart"
+echo "  • Xem trạng thái: /root/aiviethub/sync-from-github.sh compare"
+echo "  • Thiết lập auto sync: /root/aiviethub/sync-to-github.sh setup-cron 2min"
 echo ""
