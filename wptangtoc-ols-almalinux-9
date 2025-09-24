@@ -1648,7 +1648,6 @@ if [[ ! -f wptangtoc-ols.zip ]]; then
   wget http://wptangtoc.com/share/wptangtoc-ols.zip --no-check-certificate
 fi
 
-#link du phong
 if [[ ! -f wptangtoc-ols.zip ]]; then
   wget https://github.com/aiviethub/wptangtoc-ols/raw/refs/heads/main/wptangtoc-ols.zip
 fi
@@ -1665,11 +1664,9 @@ chmod 700 /etc/wptt/vhost
 # cai dat menu wptangtoc ols user
 cd
 wget https://wptangtoc.com/share/wptangtoc-ols-user.zip
-if [[ ! -f wptangtoc-ols-user.zip ]]; then #dự phòng ssl bị lỗi
   wget http://wptangtoc.com/share/wptangtoc-ols-user.zip --no-check-certificate
 fi
 
-#link du phong
 if [[ ! -f wptangtoc-ols-user.zip ]]; then
   wget https://github.com/aiviethub/wptangtoc-ols/raw/refs/heads/main/wptangtoc-ols-user.zip
 fi
