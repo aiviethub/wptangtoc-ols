@@ -1,0 +1,164 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function list_laravel_projects() {
+  echo "Danh sách Laravel Projects:"
+  echo "=========================="
+  local count=0
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+        . /etc/wptt/vhost/.$domain.laravel.conf
+        echo "$((++count)). $domain - $Laravel_Project_Name"
+        echo "   Path: $Laravel_Path"
+        echo "   Installed: $Laravel_Installed_Date"
+        echo ""
+      fi
+    done
+  fi
+  
+  if [[ $count -eq 0 ]]; then
+    echo "Chưa có Laravel project nào được cài đặt"
+    return 1
+  fi
+  echo "=========================="
+}
+
+function select_laravel_project() {
+  list_laravel_projects
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  
+  read -p "Chọn domain Laravel (nhập số thứ tự): " choice
+  if [[ ! "$choice" =~ ^[0-9]+$ ]]; then
+    echoDo "Lựa chọn không hợp lệ"
+    exit 1
+  fi
+  
+  local count=0
+  local selected_domain=""
+  for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+    local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+    if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+      ((count++))
+      if [[ $count -eq $choice ]]; then
+        selected_domain=$domain
+        break
+      fi
+    fi
+  done
+  
+  if [[ -z "$selected_domain" ]]; then
+    echoDo "Không tìm thấy Laravel project với số thứ tự $choice"
+    exit 1
+  fi
+  
+  echo $selected_domain
+}
+
+function run_artisan_command() {
+  local domain=$1
+  local command=$2
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      echo "Chạy lệnh: php artisan $command"
+      echo "Project: $Laravel_Project_Name ($domain)"
+      echo "Path: $project_path"
+      echo "=========================================="
+      
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan $command
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function show_artisan_help() {
+  echo "Laravel Artisan Commands Helper:"
+  echo "==============================="
+  echo "1. make:controller ControllerName"
+  echo "2. make:model ModelName"
+  echo "3. make:migration create_table_name"
+  echo "4. make:seeder SeederName"
+  echo "5. make:middleware MiddlewareName"
+  echo "6. make:request RequestName"
+  echo "7. make:resource ResourceName"
+  echo "8. migrate"
+  echo "9. migrate:rollback"
+  echo "10. migrate:refresh"
+  echo "11. db:seed"
+  echo "12. cache:clear"
+  echo "13. config:clear"
+  echo "14. route:clear"
+  echo "15. view:clear"
+  echo "16. queue:work"
+  echo "17. queue:restart"
+  echo "18. schedule:run"
+  echo "19. tinker"
+  echo "20. serve"
+  echo "==============================="
+}
+
+function interactive_artisan() {
+  local domain=$1
+  
+  while true; do
+    echo ""
+    echo "Laravel Artisan Interactive Mode"
+    echo "Project: $domain"
+    echo "================================="
+    show_artisan_help
+    echo ""
+    read -p "Nhập lệnh Artisan (hoặc 'exit' để thoát): " artisan_cmd
+    
+    if [[ $artisan_cmd == "exit" ]]; then
+      break
+    fi
+    
+    if [[ -n $artisan_cmd ]]; then
+      run_artisan_command "$domain" "$artisan_cmd"
+    fi
+  done
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "    WPTangToc OLS - Laravel Artisan      "
+echo "=========================================="
+echo ""
+
+if [[ $1 ]]; then
+  # Chạy lệnh trực tiếp
+  local domain=$(select_laravel_project)
+  run_artisan_command "$domain" "$1"
+else
+  # Chế độ interactive
+  local domain=$(select_laravel_project)
+  interactive_artisan "$domain"
+fi

@@ -1,0 +1,361 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function install_composer() {
+  if ! command -v composer &> /dev/null; then
+    _runing "Cài đặt Composer"
+    cd /tmp
+    curl -sS https://getcomposer.org/installer | php
+    mv composer.phar /usr/local/bin/composer
+    chmod +x /usr/local/bin/composer
+    _rundone "Cài đặt Composer"
+  else
+    echoDone "Composer đã được cài đặt"
+  fi
+}
+
+function get_domain_info() {
+  echo "Danh sách domain hiện có:"
+  echo "========================="
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      echo "- $domain"
+    done
+  else
+    echo "Chưa có domain nào được cài đặt"
+    return 1
+  fi
+  echo "========================="
+  
+  read -p "Nhập domain để cài đặt Laravel: " DOMAIN
+  if [ "$DOMAIN" = "${DOMAIN/./}" ]; then
+    echoDo "Domain không đúng định dạng"
+    exit 1
+  fi
+  
+  if [[ ! -d /usr/local/lsws/$DOMAIN/html ]]; then
+    echoDo "Domain $DOMAIN không tồn tại trong hệ thống"
+    exit 1
+  fi
+  
+  read -p "Nhập tên project Laravel: " PROJECT_NAME
+  if [[ -z "$PROJECT_NAME" ]]; then
+    PROJECT_NAME="laravel-app"
+  fi
+  
+  # Lấy thông tin PHP version từ domain config
+  if [[ -f /etc/wptt/vhost/.$DOMAIN.conf ]]; then
+    . /etc/wptt/vhost/.$DOMAIN.conf
+    PHP_VERSION=$phien_ban_php_domain
+  else
+    PHP_VERSION="8.2"
+  fi
+  
+  echo "Thông tin cài đặt:"
+  echo "- Domain: $DOMAIN"
+  echo "- Project: $PROJECT_NAME"
+  echo "- PHP Version: $PHP_VERSION"
+  echo "- Path: /usr/local/lsws/$DOMAIN/html/$PROJECT_NAME"
+}
+
+function create_laravel_project() {
+  local domain=$1
+  local project_name=$2
+  local php_version=$3
+  
+  _runing "Tạo Laravel project: $project_name"
+  
+  # Chuyển đến thư mục domain
+  cd /usr/local/lsws/$domain/html
+  
+  # Tạo project Laravel
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php /usr/local/bin/composer create-project laravel/laravel $project_name
+  
+  if [[ $? -eq 0 ]]; then
+    _rundone "Tạo Laravel project thành công"
+  else
+    _runloi "Tạo Laravel project thất bại"
+    exit 1
+  fi
+}
+
+function configure_laravel_permissions() {
+  local domain=$1
+  local project_name=$2
+  local user_name=$3
+  
+  _runing "Cấu hình quyền truy cập Laravel"
+  
+  # Lấy thông tin user từ domain config
+  if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+    . /etc/wptt/vhost/.$domain.conf
+    local user_name=$User_name_vhost
+  else
+    user_name=${domain//[-._]/wp}
+  fi
+  
+  # Cấu hình quyền
+  chown -R $user_name:$user_name /usr/local/lsws/$domain/html/$project_name
+  chmod -R 755 /usr/local/lsws/$domain/html/$project_name
+  chmod -R 775 /usr/local/lsws/$domain/html/$project_name/storage
+  chmod -R 775 /usr/local/lsws/$domain/html/$project_name/bootstrap/cache
+  
+  _rundone "Cấu hình quyền truy cập Laravel"
+}
+
+function configure_laravel_env() {
+  local domain=$1
+  local project_name=$2
+  local php_version=$3
+  
+  _runing "Cấu hình Laravel Environment"
+  
+  cd /usr/local/lsws/$domain/html/$project_name
+  
+  # Copy .env.example to .env
+  cp .env.example .env
+  
+  # Lấy thông tin database từ domain config
+  if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+    . /etc/wptt/vhost/.$domain.conf
+    local db_name=$DB_Name_web
+    local db_user=$DB_User_web
+    local db_pass=$DB_Password_web
+  else
+    # Tạo database mới cho Laravel
+    local db_name=${domain//[-._]/}_laravel_$(date +%s)
+    local db_user=${domain//[-._]/}_laravel_user_$(date +%s)
+    local db_pass=$(date +%s | sha256sum | base64 | head -c 32)
+    
+    # Tạo database
+    . /etc/wptt/.wptt.conf
+    mariadb -u $database_admin_username -p$database_admin_password -e "CREATE DATABASE IF NOT EXISTS $db_name"
+    mariadb -u $database_admin_username -p$database_admin_password -e "CREATE USER IF NOT EXISTS '$db_user'@'localhost' IDENTIFIED BY '$db_pass'"
+    mariadb -u $database_admin_username -p$database_admin_password -e "GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'localhost'"
+    mariadb -u $database_admin_username -p$database_admin_password -e "FLUSH PRIVILEGES"
+  fi
+  
+  # Cấu hình .env
+  sed -i "s/APP_NAME=Laravel/APP_NAME=$project_name/" .env
+  sed -i "s/APP_URL=http:\/\/localhost/APP_URL=https:\/\/$domain/" .env
+  sed -i "s/DB_DATABASE=laravel/DB_DATABASE=$db_name/" .env
+  sed -i "s/DB_USERNAME=root/DB_USERNAME=$db_user/" .env
+  sed -i "s/DB_PASSWORD=/DB_PASSWORD=$db_pass/" .env
+  
+  # Generate application key
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan key:generate
+  
+  _rundone "Cấu hình Laravel Environment"
+}
+
+function configure_laravel_vhost() {
+  local domain=$1
+  local project_name=$2
+  local php_version=$3
+  
+  _runing "Cấu hình Virtual Host cho Laravel"
+  
+  # Backup vhost config hiện tại
+  cp /usr/local/lsws/conf/vhosts/$domain/$domain.conf /usr/local/lsws/conf/vhosts/$domain/$domain.conf.backup.$(date +%s)
+  
+  # Tạo vhost config mới cho Laravel
+  cat > /usr/local/lsws/conf/vhosts/$domain/$domain.conf << EOF
+docRoot                   /usr/local/lsws/$domain/html/$project_name/public
+vhDomain                  $domain
+enableGzip                1
+cgroups                   0
+
+index  {
+  useServer               0
+  indexFiles              index.php, index.html
+  autoIndex               0
+}
+
+scripthandler  {
+  add                     lsapi:${domain//[-._]/} php
+}
+
+accessControl  {
+  allow                   *
+}
+
+lsrecaptcha  {
+  enabled                 1
+  type                    0
+}
+
+extprocessor ${domain//[-._]/} {
+  type                    lsapi
+  address                 uds://tmp/lshttpd/${domain//[-._]/}.sock
+  maxConns                20
+  env                     PHP_LSAPI_CHILDREN=20
+  env                     LSAPI_ACCEPT_NOTIFY=1
+  env                     LSAPI_MAX_CMD_SCRIPT_PATH_LEN=200
+  env                     LSAPI_AVOID_FORK=300M
+  initTimeout             60
+  retryTimeout            0
+  pcKeepAliveTimeout      5
+  respBuffer              0
+  autoStart               1
+  path                    /usr/local/lsws/lsphp${php_version//[-._]/}/bin/lsphp
+  backlog                 100
+  instances               1
+  extUser                 ${domain//[-._]/wp}
+  extGroup                ${domain//[-._]/wp}
+  runOnStartUp            2
+  priority                0
+  memSoftLimit            2048M
+  memHardLimit            2048M
+  procSoftLimit           300
+  procHardLimit           400
+}
+
+context / {
+  location                /usr/local/lsws/$domain/html/$project_name/public
+  allowBrowse             1
+  extraHeaders            <<<END_extraHeaders
+X-XSS-Protection 1;mode=block
+X-Frame-Options SAMEORIGIN
+Referrer-Policy strict-origin-when-cross-origin
+X-Content-Type-Options nosniff
+X-Powered-By WPTangTocOLS-Laravel
+permissions-policy accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  END_extraHeaders
+
+  rewrite  {
+    enable                  1
+    rules                   <<<END_rules
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+END_rules
+  }
+  addDefaultCharset       off
+
+  phpIniOverride  {
+
+  }
+}
+
+vhssl  {
+  keyFile                 /etc/wptt-ssl-tu-ky/$domain/$domain.key
+  certFile                /etc/wptt-ssl-tu-ky/$domain/cert.crt
+  certChain               0
+  sslProtocol             24
+  renegProtection         1
+  sslSessionCache         1
+  sslSessionTickets       1
+  enableSpdy              15
+  enableQuic              1
+}
+
+module cache {
+checkPrivateCache   1
+checkPublicCache    1
+maxCacheObjSize     10000000
+maxStaleAge         200
+qsCache             1
+reqCookieCache      1
+respCookieCache     1
+ignoreReqCacheCtrl  1
+ignoreRespCacheCtrl 0
+storagePath /usr/local/lsws/$domain/luucache
+enableCache         0
+expireInSeconds     3600
+enablePrivateCache  0
+privateExpireInSeconds 3600
+  ls_enabled              1
+}
+EOF
+
+  # Cập nhật quyền
+  chown -R lsadm:nobody /usr/local/lsws/conf/vhosts/$domain
+  chmod -R 750 /usr/local/lsws/conf/vhosts/$domain
+  
+  # Restart LiteSpeed
+  /usr/local/lsws/bin/lswsctrl restart >/dev/null 2>&1
+  
+  _rundone "Cấu hình Virtual Host cho Laravel"
+}
+
+function optimize_laravel() {
+  local domain=$1
+  local project_name=$2
+  local php_version=$3
+  
+  _runing "Tối ưu hóa Laravel"
+  
+  cd /usr/local/lsws/$domain/html/$project_name
+  
+  # Cài đặt dependencies
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php /usr/local/bin/composer install --optimize-autoloader --no-dev
+  
+  # Cache configuration
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:cache
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:cache
+  /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:cache
+  
+  _rundone "Tối ưu hóa Laravel"
+}
+
+function create_laravel_config() {
+  local domain=$1
+  local project_name=$2
+  
+  # Tạo file config cho Laravel project
+  cat > /etc/wptt/vhost/.$domain.laravel.conf << EOF
+Laravel_Project_Name=$project_name
+Laravel_Path=/usr/local/lsws/$domain/html/$project_name
+Laravel_Public_Path=/usr/local/lsws/$domain/html/$project_name/public
+Laravel_Installed_Date=$(date '+%d-%m-%Y %H:%M')
+EOF
+
+  chown root:root /etc/wptt/vhost/.$domain.laravel.conf
+  chmod 700 /etc/wptt/vhost/.$domain.laravel.conf
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "    WPTangToc OLS - Laravel Installer    "
+echo "=========================================="
+echo ""
+
+# Kiểm tra Composer
+install_composer
+
+# Lấy thông tin domain
+get_domain_info
+
+# Xác nhận cài đặt
+echo ""
+read -p "Bạn có muốn tiếp tục cài đặt Laravel? (y/n): " confirm
+if [[ $confirm != "y" && $confirm != "Y" ]]; then
+  echo "Hủy cài đặt Laravel"
+  exit 0
+fi
+
+# Thực hiện cài đặt
+create_laravel_project "$DOMAIN" "$PROJECT_NAME" "$PHP_VERSION"
+configure_laravel_permissions "$DOMAIN" "$PROJECT_NAME"
+configure_laravel_env "$DOMAIN" "$PROJECT_NAME" "$PHP_VERSION"
+configure_laravel_vhost "$DOMAIN" "$PROJECT_NAME" "$PHP_VERSION"
+optimize_laravel "$DOMAIN" "$PROJECT_NAME" "$PHP_VERSION"
+create_laravel_config "$DOMAIN" "$PROJECT_NAME"
+
+echo ""
+echo "=========================================="
+echo "    Cài đặt Laravel hoàn tất!            "
+echo "=========================================="
+echo "Domain: https://$DOMAIN"
+echo "Project: $PROJECT_NAME"
+echo "Path: /usr/local/lsws/$DOMAIN/html/$PROJECT_NAME"
+echo "Artisan: cd /usr/local/lsws/$DOMAIN/html/$PROJECT_NAME && php artisan"
+echo "=========================================="

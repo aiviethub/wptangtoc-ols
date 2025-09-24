@@ -1,0 +1,15 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel wptt-manage-laravel-queue        "
+echo "=========================================="
+echo ""
+echoDo "Tính năng này đang được phát triển"
+echo "Sẽ được tích hợp trong phiên bản tiếp theo"
+

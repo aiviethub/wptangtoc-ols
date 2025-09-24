@@ -1,0 +1,25 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel Nova           "
+echo "=========================================="
+echo ""
+echoDo "Tính năng này đang được phát triển"
+echo "Laravel Nova sẽ được tích hợp trong phiên bản tiếp theo"
+echo ""
+echo "Laravel Nova bao gồm:"
+echo "- Admin panel đầy đủ tính năng"
+echo "- Resource management"
+echo "- Metrics và analytics"
+echo "- Custom tools và cards"
+echo "- Authorization và permissions"
+echo "- File management"
+echo ""
+echo "Laravel Nova là sản phẩm thương mại của Laravel"
+echo "Cần license để sử dụng"

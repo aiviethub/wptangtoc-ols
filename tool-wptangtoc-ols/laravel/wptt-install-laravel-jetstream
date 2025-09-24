@@ -1,0 +1,24 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel Jetstream      "
+echo "=========================================="
+echo ""
+echoDo "Tính năng này đang được phát triển"
+echo "Laravel Jetstream sẽ được tích hợp trong phiên bản tiếp theo"
+echo ""
+echo "Laravel Jetstream bao gồm:"
+echo "- Authentication scaffolding"
+echo "- Two-factor authentication"
+echo "- Session management"
+echo "- API token management"
+echo "- Team management"
+echo "- Livewire hoặc Inertia.js support"
+echo ""
+echo "Vui lòng sử dụng Laravel Breeze trước mắt"

@@ -1,0 +1,349 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function list_laravel_projects() {
+  echo "Danh sách Laravel Projects:"
+  echo "=========================="
+  local count=0
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+        . /etc/wptt/vhost/.$domain.laravel.conf
+        echo "$((++count)). $domain - $Laravel_Project_Name"
+        echo "   Path: $Laravel_Path"
+        echo "   Installed: $Laravel_Installed_Date"
+        echo "   Status: $(check_laravel_status $domain)"
+        echo ""
+      fi
+    done
+  fi
+  
+  if [[ $count -eq 0 ]]; then
+    echo "Chưa có Laravel project nào được cài đặt"
+    return 1
+  fi
+  echo "=========================="
+}
+
+function check_laravel_status() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      if [[ -f $project_path/artisan ]]; then
+        echo "✓ Active"
+      else
+        echo "✗ Corrupted"
+      fi
+    else
+      echo "✗ Not Found"
+    fi
+  else
+    echo "✗ No Config"
+  fi
+}
+
+function select_laravel_project() {
+  list_laravel_projects
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  
+  read -p "Chọn domain Laravel (nhập số thứ tự): " choice
+  if [[ ! "$choice" =~ ^[0-9]+$ ]]; then
+    echoDo "Lựa chọn không hợp lệ"
+    exit 1
+  fi
+  
+  local count=0
+  local selected_domain=""
+  for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+    local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+    if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+      ((count++))
+      if [[ $count -eq $choice ]]; then
+        selected_domain=$domain
+        break
+      fi
+    fi
+  done
+  
+  if [[ -z "$selected_domain" ]]; then
+    echoDo "Không tìm thấy Laravel project với số thứ tự $choice"
+    exit 1
+  fi
+  
+  echo $selected_domain
+}
+
+function show_project_info() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    echo "Laravel Project Information:"
+    echo "============================"
+    echo "Domain: $domain"
+    echo "Project Name: $Laravel_Project_Name"
+    echo "Path: $Laravel_Path"
+    echo "Public Path: $Laravel_Public_Path"
+    echo "Installed Date: $Laravel_Installed_Date"
+    echo "Status: $(check_laravel_status $domain)"
+    echo ""
+    
+    if [[ -d $project_path ]]; then
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      cd $project_path
+      
+      # Laravel version
+      local laravel_version=$(/usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan --version 2>/dev/null | head -n1)
+      echo "Laravel Version: $laravel_version"
+      
+      # PHP version
+      local php_ver=$(/usr/local/lsws/lsphp${php_version//[-._]/}/bin/php --version | head -n1)
+      echo "PHP Version: $php_ver"
+      
+      # Database info
+      if [[ -f .env ]]; then
+        local db_name=$(grep DB_DATABASE .env | cut -d'=' -f2)
+        local db_host=$(grep DB_HOST .env | cut -d'=' -f2)
+        echo "Database: $db_name@$db_host"
+      fi
+      
+      # Storage info
+      if [[ -d storage ]]; then
+        local storage_size=$(du -sh storage 2>/dev/null | cut -f1)
+        echo "Storage Size: $storage_size"
+      fi
+      
+      # Logs info
+      if [[ -d storage/logs ]]; then
+        local log_count=$(find storage/logs -name "*.log" | wc -l)
+        echo "Log Files: $log_count"
+      fi
+    fi
+    echo "============================"
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function backup_laravel_project() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    local project_name=$Laravel_Project_Name
+    
+    if [[ -d $project_path ]]; then
+      local backup_dir="/usr/local/backup-website/$domain"
+      local backup_file="$backup_dir/laravel-$project_name-$(date +%Y%m%d-%H%M%S).tar.gz"
+      
+      _runing "Sao lưu Laravel project: $project_name"
+      
+      # Tạo thư mục backup nếu chưa có
+      mkdir -p $backup_dir
+      
+      # Tạo backup
+      cd $project_path
+      tar -czf $backup_file . --exclude=node_modules --exclude=vendor --exclude=storage/logs
+      
+      if [[ $? -eq 0 ]]; then
+        _rundone "Sao lưu Laravel project thành công"
+        echo "Backup file: $backup_file"
+        echo "Size: $(du -sh $backup_file | cut -f1)"
+      else
+        _runloi "Sao lưu Laravel project thất bại"
+      fi
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function restore_laravel_project() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    local project_name=$Laravel_Project_Name
+    
+    # Liệt kê các file backup
+    local backup_dir="/usr/local/backup-website/$domain"
+    echo "Danh sách backup Laravel:"
+    echo "========================"
+    local count=0
+    for backup in $(ls -t $backup_dir/laravel-$project_name-*.tar.gz 2>/dev/null); do
+      ((count++))
+      local backup_name=$(basename $backup)
+      local backup_date=$(echo $backup_name | sed "s/laravel-$project_name-//" | sed "s/.tar.gz//")
+      local backup_size=$(du -sh $backup | cut -f1)
+      echo "$count. $backup_name ($backup_size) - $backup_date"
+    done
+    
+    if [[ $count -eq 0 ]]; then
+      echoDo "Không tìm thấy backup Laravel nào"
+      exit 1
+    fi
+    
+    echo "========================"
+    read -p "Chọn backup để khôi phục (nhập số thứ tự): " choice
+    
+    if [[ ! "$choice" =~ ^[0-9]+$ ]] || [[ $choice -lt 1 ]] || [[ $choice -gt $count ]]; then
+      echoDo "Lựa chọn không hợp lệ"
+      exit 1
+    fi
+    
+    local selected_backup=$(ls -t $backup_dir/laravel-$project_name-*.tar.gz | sed -n "${choice}p")
+    
+    echo ""
+    read -p "Bạn có chắc chắn muốn khôi phục từ $selected_backup? (y/n): " confirm
+    if [[ $confirm != "y" && $confirm != "Y" ]]; then
+      echo "Hủy khôi phục"
+      exit 0
+    fi
+    
+    _runing "Khôi phục Laravel project từ backup"
+    
+    # Backup hiện tại trước khi khôi phục
+    backup_laravel_project $domain
+    
+    # Khôi phục
+    cd $project_path
+    tar -xzf $selected_backup
+    
+    # Cập nhật quyền
+    chown -R $(whoami):$(whoami) storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
+    
+    _rundone "Khôi phục Laravel project thành công"
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function delete_laravel_project() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    local project_name=$Laravel_Project_Name
+    
+    echo "Cảnh báo: Thao tác này sẽ xóa hoàn toàn Laravel project!"
+    echo "Domain: $domain"
+    echo "Project: $project_name"
+    echo "Path: $project_path"
+    echo ""
+    read -p "Bạn có chắc chắn muốn xóa? (y/n): " confirm
+    
+    if [[ $confirm == "y" || $confirm == "Y" ]]; then
+      _runing "Xóa Laravel project: $project_name"
+      
+      # Backup trước khi xóa
+      backup_laravel_project $domain
+      
+      # Xóa project
+      rm -rf $project_path
+      
+      # Xóa config
+      rm -f /etc/wptt/vhost/.$domain.laravel.conf
+      
+      # Khôi phục vhost config gốc
+      if [[ -f /usr/local/lsws/conf/vhosts/$domain/$domain.conf.backup.* ]]; then
+        local backup_vhost=$(ls -t /usr/local/lsws/conf/vhosts/$domain/$domain.conf.backup.* | head -n1)
+        cp $backup_vhost /usr/local/lsws/conf/vhosts/$domain/$domain.conf
+        /usr/local/lsws/bin/lswsctrl restart >/dev/null 2>&1
+      fi
+      
+      _rundone "Xóa Laravel project thành công"
+    else
+      echo "Hủy xóa Laravel project"
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel Project Manager"
+echo "=========================================="
+echo ""
+
+if [[ $1 ]]; then
+  # Chạy lệnh trực tiếp
+  local domain=$(select_laravel_project)
+  case $1 in
+    "info")
+      show_project_info "$domain"
+      ;;
+    "backup")
+      backup_laravel_project "$domain"
+      ;;
+    "restore")
+      restore_laravel_project "$domain"
+      ;;
+    "delete")
+      delete_laravel_project "$domain"
+      ;;
+    *)
+      echoDo "Lệnh không hợp lệ: $1"
+      echo "Sử dụng: info, backup, restore, delete"
+      exit 1
+      ;;
+  esac
+else
+  # Chế độ interactive
+  local domain=$(select_laravel_project)
+  
+  echo ""
+  echo "Laravel Project Management"
+  echo "Project: $domain"
+  echo "=========================="
+  echo "1. Xem thông tin project"
+  echo "2. Sao lưu project"
+  echo "3. Khôi phục project"
+  echo "4. Xóa project"
+  echo "0. Thoát"
+  echo "=========================="
+  
+  read -p "Chọn hành động (0-4): " choice
+  
+  case $choice in
+    1) show_project_info "$domain" ;;
+    2) backup_laravel_project "$domain" ;;
+    3) restore_laravel_project "$domain" ;;
+    4) delete_laravel_project "$domain" ;;
+    0) echo "Thoát" ;;
+    *) echoDo "Lựa chọn không hợp lệ" ;;
+  esac
+fi

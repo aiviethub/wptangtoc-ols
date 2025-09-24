@@ -1,0 +1,206 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function list_laravel_projects() {
+  echo "Danh sách Laravel Projects:"
+  echo "=========================="
+  local count=0
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+        . /etc/wptt/vhost/.$domain.laravel.conf
+        echo "$((++count)). $domain - $Laravel_Project_Name"
+        echo "   Path: $Laravel_Path"
+        echo ""
+      fi
+    done
+  fi
+  
+  if [[ $count -eq 0 ]]; then
+    echo "Chưa có Laravel project nào được cài đặt"
+    return 1
+  fi
+  echo "=========================="
+}
+
+function select_laravel_project() {
+  list_laravel_projects
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  
+  read -p "Chọn domain Laravel (nhập số thứ tự): " choice
+  if [[ ! "$choice" =~ ^[0-9]+$ ]]; then
+    echoDo "Lựa chọn không hợp lệ"
+    exit 1
+  fi
+  
+  local count=0
+  local selected_domain=""
+  for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+    local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+    if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+      ((count++))
+      if [[ $count -eq $choice ]]; then
+        selected_domain=$domain
+        break
+      fi
+    fi
+  done
+  
+  if [[ -z "$selected_domain" ]]; then
+    echoDo "Không tìm thấy Laravel project với số thứ tự $choice"
+    exit 1
+  fi
+  
+  echo $selected_domain
+}
+
+function install_laravel_breeze() {
+  local domain=$1
+  local stack=$2
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      _runing "Cài đặt Laravel Breeze ($stack stack)"
+      
+      # Cài đặt Breeze
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php /usr/local/bin/composer require laravel/breeze --dev
+      
+      # Cài đặt Breeze với stack được chọn
+      case $stack in
+        "blade")
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan breeze:install blade
+          ;;
+        "react")
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan breeze:install react
+          ;;
+        "vue")
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan breeze:install vue
+          ;;
+        "api")
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan breeze:install api
+          ;;
+        *)
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan breeze:install blade
+          ;;
+      esac
+      
+      # Cài đặt NPM dependencies (nếu cần)
+      if [[ $stack != "api" && $stack != "blade" ]]; then
+        _runing "Cài đặt NPM dependencies"
+        if command -v npm &> /dev/null; then
+          npm install
+          npm run build
+        else
+          echoDo "NPM không được cài đặt. Vui lòng cài đặt Node.js và NPM để sử dụng $stack stack"
+        fi
+        _rundone "Cài đặt NPM dependencies"
+      fi
+      
+      # Chạy migrations
+      _runing "Chạy database migrations"
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan migrate
+      _rundone "Chạy database migrations"
+      
+      # Cập nhật quyền
+      chown -R $(whoami):$(whoami) storage bootstrap/cache
+      chmod -R 775 storage bootstrap/cache
+      
+      _rundone "Cài đặt Laravel Breeze ($stack stack)"
+      
+      echo ""
+      echo "=========================================="
+      echo "    Laravel Breeze cài đặt thành công!   "
+      echo "=========================================="
+      echo "Domain: https://$domain"
+      echo "Project: $Laravel_Project_Name"
+      echo "Stack: $stack"
+      echo "Path: $project_path"
+      echo ""
+      echo "Các route authentication đã được tạo:"
+      echo "- /login"
+      echo "- /register"
+      echo "- /forgot-password"
+      echo "- /reset-password"
+      echo "- /verify-email"
+      echo "- /confirm-password"
+      echo "=========================================="
+      
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel Breeze Installer"
+echo "=========================================="
+echo ""
+
+# Chọn Laravel project
+local domain=$(select_laravel_project)
+
+# Chọn stack
+echo ""
+echo "Chọn Laravel Breeze Stack:"
+echo "=========================="
+echo "1. Blade (Server-side rendering)"
+echo "2. React (Client-side rendering)"
+echo "3. Vue (Client-side rendering)"
+echo "4. API (API only)"
+echo "=========================="
+
+read -p "Chọn stack (1-4): " stack_choice
+
+case $stack_choice in
+  1) stack="blade" ;;
+  2) stack="react" ;;
+  3) stack="vue" ;;
+  4) stack="api" ;;
+  *)
+    echoDo "Lựa chọn không hợp lệ, sử dụng Blade stack"
+    stack="blade"
+    ;;
+esac
+
+# Xác nhận cài đặt
+echo ""
+echo "Thông tin cài đặt:"
+echo "- Domain: $domain"
+echo "- Stack: $stack"
+echo ""
+
+read -p "Bạn có muốn tiếp tục cài đặt Laravel Breeze? (y/n): " confirm
+if [[ $confirm != "y" && $confirm != "Y" ]]; then
+  echo "Hủy cài đặt Laravel Breeze"
+  exit 0
+fi
+
+# Thực hiện cài đặt
+install_laravel_breeze "$domain" "$stack"

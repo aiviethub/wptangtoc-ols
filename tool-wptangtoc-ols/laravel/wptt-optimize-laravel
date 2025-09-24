@@ -1,0 +1,379 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function list_laravel_projects() {
+  echo "Danh sách Laravel Projects:"
+  echo "=========================="
+  local count=0
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+        . /etc/wptt/vhost/.$domain.laravel.conf
+        echo "$((++count)). $domain - $Laravel_Project_Name"
+      fi
+    done
+  fi
+  
+  if [[ $count -eq 0 ]]; then
+    echo "Chưa có Laravel project nào được cài đặt"
+    return 1
+  fi
+  echo "=========================="
+}
+
+function select_laravel_project() {
+  list_laravel_projects
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  
+  read -p "Chọn domain Laravel (nhập số thứ tự): " choice
+  if [[ ! "$choice" =~ ^[0-9]+$ ]]; then
+    echoDo "Lựa chọn không hợp lệ"
+    exit 1
+  fi
+  
+  local count=0
+  local selected_domain=""
+  for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+    local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+    if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+      ((count++))
+      if [[ $count -eq $choice ]]; then
+        selected_domain=$domain
+        break
+      fi
+    fi
+  done
+  
+  if [[ -z "$selected_domain" ]]; then
+    echoDo "Không tìm thấy Laravel project với số thứ tự $choice"
+    exit 1
+  fi
+  
+  echo $selected_domain
+}
+
+function optimize_laravel_performance() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      _runing "Tối ưu hóa Laravel Performance"
+      
+      # 1. Clear all caches
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan cache:clear
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:clear
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:clear
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:clear
+      
+      # 2. Optimize autoloader
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php /usr/local/bin/composer install --optimize-autoloader --no-dev
+      
+      # 3. Cache configuration
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:cache
+      
+      # 4. Cache routes
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:cache
+      
+      # 5. Cache views
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:cache
+      
+      # 6. Optimize database queries
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan optimize
+      
+      _rundone "Tối ưu hóa Laravel Performance"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function optimize_laravel_php() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      _runing "Tối ưu hóa PHP cho Laravel"
+      
+      local php_ini="/usr/local/lsws/lsphp${php_version//[-._]/}/etc/php.ini"
+      
+      # Backup PHP config
+      cp $php_ini $php_ini.backup.$(date +%s)
+      
+      # Tối ưu hóa OPcache cho Laravel
+      sed -i '/opcache.memory_consumption/d' $php_ini
+      sed -i '/opcache.interned_strings_buffer/d' $php_ini
+      sed -i '/opcache.max_accelerated_files/d' $php_ini
+      sed -i '/opcache.revalidate_freq/d' $php_ini
+      sed -i '/opcache.fast_shutdown/d' $php_ini
+      sed -i '/opcache.enable_cli/d' $php_ini
+      sed -i '/opcache.validate_timestamps/d' $php_ini
+      sed -i '/opcache.file_update_protection/d' $php_ini
+      
+      cat >> $php_ini << EOF
+
+; Laravel Optimization
+opcache.memory_consumption=256
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=20000
+opcache.revalidate_freq=0
+opcache.fast_shutdown=1
+opcache.enable_cli=1
+opcache.validate_timestamps=0
+opcache.file_update_protection=0
+EOF
+      
+      # Tối ưu hóa memory và execution time
+      sed -i 's/memory_limit = .*/memory_limit = 512M/' $php_ini
+      sed -i 's/max_execution_time = .*/max_execution_time = 300/' $php_ini
+      sed -i 's/max_input_time = .*/max_input_time = 300/' $php_ini
+      
+      # Tối ưu hóa upload
+      sed -i 's/upload_max_filesize = .*/upload_max_filesize = 64M/' $php_ini
+      sed -i 's/post_max_size = .*/post_max_size = 64M/' $php_ini
+      
+      _rundone "Tối ưu hóa PHP cho Laravel"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function optimize_laravel_database() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      _runing "Tối ưu hóa Database cho Laravel"
+      
+      # 1. Run migrations
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan migrate --force
+      
+      # 2. Optimize database
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan db:show --counts
+      
+      # 3. Clear model cache
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan model:prune
+      
+      _rundone "Tối ưu hóa Database cho Laravel"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function optimize_laravel_storage() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      _runing "Tối ưu hóa Storage cho Laravel"
+      
+      # 1. Clear old logs
+      find $project_path/storage/logs -name "*.log" -mtime +7 -delete
+      
+      # 2. Clear cache files
+      rm -rf $project_path/storage/framework/cache/*
+      rm -rf $project_path/storage/framework/sessions/*
+      rm -rf $project_path/storage/framework/views/*
+      
+      # 3. Set proper permissions
+      chmod -R 775 $project_path/storage
+      chmod -R 775 $project_path/bootstrap/cache
+      
+      # 4. Create symbolic link for storage (if not exists)
+      if [[ ! -L $project_path/public/storage ]]; then
+        cd $project_path
+        /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan storage:link
+      fi
+      
+      _rundone "Tối ưu hóa Storage cho Laravel"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function show_optimization_status() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      echo "Laravel Optimization Status:"
+      echo "============================"
+      echo "Project: $Laravel_Project_Name ($domain)"
+      echo "Path: $project_path"
+      echo ""
+      
+      # Check cache status
+      if [[ -f $project_path/bootstrap/cache/config.php ]]; then
+        echo "✓ Config cache: Enabled"
+      else
+        echo "✗ Config cache: Disabled"
+      fi
+      
+      if [[ -f $project_path/bootstrap/cache/routes-v7.php ]]; then
+        echo "✓ Route cache: Enabled"
+      else
+        echo "✗ Route cache: Disabled"
+      fi
+      
+      if [[ -d $project_path/storage/framework/views ]]; then
+        local view_count=$(find $project_path/storage/framework/views -name "*.php" | wc -l)
+        echo "✓ View cache: $view_count files"
+      else
+        echo "✗ View cache: No files"
+      fi
+      
+      # Check storage permissions
+      local storage_perm=$(stat -c %a $project_path/storage 2>/dev/null)
+      if [[ $storage_perm == "775" ]]; then
+        echo "✓ Storage permissions: Correct"
+      else
+        echo "✗ Storage permissions: $storage_perm (should be 775)"
+      fi
+      
+      # Check storage link
+      if [[ -L $project_path/public/storage ]]; then
+        echo "✓ Storage link: Enabled"
+      else
+        echo "✗ Storage link: Disabled"
+      fi
+      
+      echo "============================"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "  WPTangToc OLS - Laravel Optimizer      "
+echo "=========================================="
+echo ""
+
+if [[ $1 ]]; then
+  # Chạy lệnh trực tiếp
+  local domain=$(select_laravel_project)
+  case $1 in
+    "performance")
+      optimize_laravel_performance "$domain"
+      ;;
+    "php")
+      optimize_laravel_php "$domain"
+      ;;
+    "database")
+      optimize_laravel_database "$domain"
+      ;;
+    "storage")
+      optimize_laravel_storage "$domain"
+      ;;
+    "status")
+      show_optimization_status "$domain"
+      ;;
+    *)
+      echoDo "Lệnh không hợp lệ: $1"
+      echo "Sử dụng: performance, php, database, storage, status"
+      exit 1
+      ;;
+  esac
+else
+  # Chế độ interactive
+  local domain=$(select_laravel_project)
+  
+  echo ""
+  echo "Laravel Optimization"
+  echo "Project: $domain"
+  echo "==================="
+  echo "1. Tối ưu hóa Performance (All)"
+  echo "2. Tối ưu hóa PHP"
+  echo "3. Tối ưu hóa Database"
+  echo "4. Tối ưu hóa Storage"
+  echo "5. Xem trạng thái tối ưu hóa"
+  echo "0. Thoát"
+  echo "==================="
+  
+  read -p "Chọn hành động (0-5): " choice
+  
+  case $choice in
+    1) optimize_laravel_performance "$domain" ;;
+    2) optimize_laravel_php "$domain" ;;
+    3) optimize_laravel_database "$domain" ;;
+    4) optimize_laravel_storage "$domain" ;;
+    5) show_optimization_status "$domain" ;;
+    0) echo "Thoát" ;;
+    *) echoDo "Lựa chọn không hợp lệ" ;;
+  esac
+fi

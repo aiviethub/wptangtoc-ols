@@ -1,0 +1,268 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+function list_laravel_projects() {
+  echo "Danh sách Laravel Projects:"
+  echo "=========================="
+  local count=0
+  if [ "$(ls -A /etc/wptt/vhost 2>/dev/null)" ]; then
+    for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+      local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+      if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+        . /etc/wptt/vhost/.$domain.laravel.conf
+        echo "$((++count)). $domain - $Laravel_Project_Name"
+      fi
+    done
+  fi
+  
+  if [[ $count -eq 0 ]]; then
+    echo "Chưa có Laravel project nào được cài đặt"
+    return 1
+  fi
+  echo "=========================="
+}
+
+function select_laravel_project() {
+  list_laravel_projects
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  
+  read -p "Chọn domain Laravel (nhập số thứ tự): " choice
+  if [[ ! "$choice" =~ ^[0-9]+$ ]]; then
+    echoDo "Lựa chọn không hợp lệ"
+    exit 1
+  fi
+  
+  local count=0
+  local selected_domain=""
+  for entry in $(ls -A /etc/wptt/vhost 2>/dev/null | sort -uV); do
+    local domain=$(echo $entry | sed 's/^.//' | sed 's/.conf//')
+    if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+      ((count++))
+      if [[ $count -eq $choice ]]; then
+        selected_domain=$domain
+        break
+      fi
+    fi
+  done
+  
+  if [[ -z "$selected_domain" ]]; then
+    echoDo "Không tìm thấy Laravel project với số thứ tự $choice"
+    exit 1
+  fi
+  
+  echo $selected_domain
+}
+
+function clear_laravel_cache() {
+  local domain=$1
+  local cache_type=$2
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      case $cache_type in
+        "all")
+          _runing "Xóa tất cả cache Laravel"
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan cache:clear
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:clear
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:clear
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:clear
+          _rundone "Xóa tất cả cache Laravel"
+          ;;
+        "cache")
+          _runing "Xóa application cache"
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan cache:clear
+          _rundone "Xóa application cache"
+          ;;
+        "config")
+          _runing "Xóa config cache"
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:clear
+          _rundone "Xóa config cache"
+          ;;
+        "route")
+          _runing "Xóa route cache"
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:clear
+          _rundone "Xóa route cache"
+          ;;
+        "view")
+          _runing "Xóa view cache"
+          /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:clear
+          _rundone "Xóa view cache"
+          ;;
+        *)
+          echoDo "Loại cache không hợp lệ: $cache_type"
+          return 1
+          ;;
+      esac
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function optimize_laravel_cache() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      cd $project_path
+      
+      # Lấy PHP version từ domain config
+      if [[ -f /etc/wptt/vhost/.$domain.conf ]]; then
+        . /etc/wptt/vhost/.$domain.conf
+        local php_version=$phien_ban_php_domain
+      else
+        local php_version="8.2"
+      fi
+      
+      _runing "Tối ưu hóa cache Laravel"
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan config:cache
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan route:cache
+      /usr/local/lsws/lsphp${php_version//[-._]/}/bin/php artisan view:cache
+      _rundone "Tối ưu hóa cache Laravel"
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+function show_cache_status() {
+  local domain=$1
+  
+  if [[ -f /etc/wptt/vhost/.$domain.laravel.conf ]]; then
+    . /etc/wptt/vhost/.$domain.laravel.conf
+    local project_path=$Laravel_Path
+    
+    if [[ -d $project_path ]]; then
+      echo "Laravel Cache Status:"
+      echo "===================="
+      echo "Project: $Laravel_Project_Name ($domain)"
+      echo "Path: $project_path"
+      echo ""
+      
+      # Kiểm tra các file cache
+      if [[ -f $project_path/bootstrap/cache/config.php ]]; then
+        echo "✓ Config cache: Enabled"
+      else
+        echo "✗ Config cache: Disabled"
+      fi
+      
+      if [[ -f $project_path/bootstrap/cache/routes-v7.php ]]; then
+        echo "✓ Route cache: Enabled"
+      else
+        echo "✗ Route cache: Disabled"
+      fi
+      
+      if [[ -d $project_path/storage/framework/views ]]; then
+        local view_count=$(find $project_path/storage/framework/views -name "*.php" | wc -l)
+        echo "✓ View cache: $view_count files"
+      else
+        echo "✗ View cache: No files"
+      fi
+      
+      if [[ -d $project_path/storage/framework/cache ]]; then
+        local cache_size=$(du -sh $project_path/storage/framework/cache 2>/dev/null | cut -f1)
+        echo "✓ Application cache: $cache_size"
+      else
+        echo "✗ Application cache: No data"
+      fi
+      
+      echo "===================="
+    else
+      echoDo "Không tìm thấy project Laravel tại $project_path"
+      exit 1
+    fi
+  else
+    echoDo "Domain $domain chưa được cài đặt Laravel"
+    exit 1
+  fi
+}
+
+# Main execution
+clear
+echo "=========================================="
+echo "    WPTangToc OLS - Laravel Cache        "
+echo "=========================================="
+echo ""
+
+if [[ $1 ]]; then
+  # Chạy lệnh trực tiếp
+  local domain=$(select_laravel_project)
+  case $1 in
+    "clear")
+      clear_laravel_cache "$domain" "all"
+      ;;
+    "optimize")
+      optimize_laravel_cache "$domain"
+      ;;
+    "status")
+      show_cache_status "$domain"
+      ;;
+    *)
+      echoDo "Lệnh không hợp lệ: $1"
+      echo "Sử dụng: clear, optimize, status"
+      exit 1
+      ;;
+  esac
+else
+  # Chế độ interactive
+  local domain=$(select_laravel_project)
+  
+  echo ""
+  echo "Laravel Cache Management"
+  echo "Project: $domain"
+  echo "========================"
+  echo "1. Xóa tất cả cache"
+  echo "2. Xóa application cache"
+  echo "3. Xóa config cache"
+  echo "4. Xóa route cache"
+  echo "5. Xóa view cache"
+  echo "6. Tối ưu hóa cache"
+  echo "7. Xem trạng thái cache"
+  echo "0. Thoát"
+  echo "========================"
+  
+  read -p "Chọn hành động (0-7): " choice
+  
+  case $choice in
+    1) clear_laravel_cache "$domain" "all" ;;
+    2) clear_laravel_cache "$domain" "cache" ;;
+    3) clear_laravel_cache "$domain" "config" ;;
+    4) clear_laravel_cache "$domain" "route" ;;
+    5) clear_laravel_cache "$domain" "view" ;;
+    6) optimize_laravel_cache "$domain" ;;
+    7) show_cache_status "$domain" ;;
+    0) echo "Thoát" ;;
+    *) echoDo "Lựa chọn không hợp lệ" ;;
+  esac
+fi

@@ -1,0 +1,122 @@
+#!/bin/bash
+# @author: Gia Tuấn
+# @website: https://wptangtoc.com
+# @email: giatuan@wptangtoc.com
+# @since: 2025
+
+. /etc/wptt/echo-color
+
+if [[ $1 = "" ]]; then
+  clear
+  RED='\033[0;31m'
+  NC='\033[0m'
+  echo -e "${RED}+-----------------------------------------------------------------------+"
+  echo "|                                                                       |"
+  echo "|                       WPTANGTOC OLS LARAVEL MANAGER                   |"
+  echo "|                          Phát triển bởi: Gia Tuấn                     |"
+  echo -e "+-----------------------------------------------------------------------+${NC}"
+  echo ""
+  echo ""
+else
+  echo ""
+  echoDo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
+  echo ""
+  echo ""
+  echo "WPTangToc OLS Laravel Manager:"
+  echo ""
+fi
+
+options=(
+  "Cài đặt Laravel mới"
+  "Cài đặt Laravel Breeze (Authentication)"
+  "Cài đặt Laravel Jetstream (Full-stack)"
+  "Cài đặt Laravel Nova (Admin Panel)"
+  "Quản lý Laravel Projects"
+  "Cấu hình Laravel Environment"
+  "Tối ưu hóa Laravel Performance"
+  "Backup Laravel Project"
+  "Deploy Laravel Production"
+  "Quản lý Laravel Queue"
+  "Quản lý Laravel Schedule"
+  "Laravel Logs"
+  "Laravel Artisan Commands"
+  "Laravel Database Migration"
+  "Laravel Cache Management"
+  "Laravel Package Manager"
+  "Laravel Security Hardening"
+  "Laravel Monitoring"
+  "Laravel API Documentation"
+  "Laravel Testing"
+)
+
+PS3="
+Nhập lựa chọn của bạn (1-${#options[@]}) [0=Thoát]: "
+select opt in "${options[@]}"; do
+  case $opt in
+    "${options[0]}")
+      . /etc/wptt/laravel/wptt-install-laravel
+      ;;
+    "${options[1]}")
+      . /etc/wptt/laravel/wptt-install-laravel-breeze
+      ;;
+    "${options[2]}")
+      . /etc/wptt/laravel/wptt-install-laravel-jetstream
+      ;;
+    "${options[3]}")
+      . /etc/wptt/laravel/wptt-install-laravel-nova
+      ;;
+    "${options[4]}")
+      . /etc/wptt/laravel/wptt-manage-laravel-projects
+      ;;
+    "${options[5]}")
+      . /etc/wptt/laravel/wptt-configure-laravel-env
+      ;;
+    "${options[6]}")
+      . /etc/wptt/laravel/wptt-optimize-laravel
+      ;;
+    "${options[7]}")
+      . /etc/wptt/laravel/wptt-backup-laravel
+      ;;
+    "${options[8]}")
+      . /etc/wptt/laravel/wptt-deploy-laravel
+      ;;
+    "${options[9]}")
+      . /etc/wptt/laravel/wptt-manage-laravel-queue
+      ;;
+    "${options[10]}")
+      . /etc/wptt/laravel/wptt-manage-laravel-schedule
+      ;;
+    "${options[11]}")
+      . /etc/wptt/laravel/wptt-laravel-logs
+      ;;
+    "${options[12]}")
+      . /etc/wptt/laravel/wptt-laravel-artisan
+      ;;
+    "${options[13]}")
+      . /etc/wptt/laravel/wptt-laravel-migration
+      ;;
+    "${options[14]}")
+      . /etc/wptt/laravel/wptt-laravel-cache
+      ;;
+    "${options[15]}")
+      . /etc/wptt/laravel/wptt-laravel-packages
+      ;;
+    "${options[16]}")
+      . /etc/wptt/laravel/wptt-laravel-security
+      ;;
+    "${options[17]}")
+      . /etc/wptt/laravel/wptt-laravel-monitoring
+      ;;
+    "${options[18]}")
+      . /etc/wptt/laravel/wptt-laravel-api-docs
+      ;;
+    "${options[19]}")
+      . /etc/wptt/laravel/wptt-laravel-testing
+      ;;
+    *)
+      echo "Đang thoát..."
+      ps -ef | grep 'bash' | grep '/etc/wptt\|/bin/wptangtoc' | grep -v grep | grep -v 'preload' | grep -v 'status' | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1 | echo 'Hoàn tất thoát menu Laravel Manager' | tr -s '\n' ' '
+      break
+      ;;
+  esac
+done
