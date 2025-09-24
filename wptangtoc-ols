@@ -121,4 +121,16 @@ if [[ $(uname -m | grep 'aarch64') && $SERVER_OS = 'almalinux' ]]; then #redhat 
   exit
 fi
 
+# Download and run the actual installation script
+if [[ $SERVER_OS = 'almalinux' ]]; then
+  wget -q https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/wptangtoc-ols-almalinux
+  bash wptangtoc-ols-almalinux
+elif [[ $SERVER_OS = 'almalinux-9' ]]; then
+  wget -q https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/wptangtoc-ols-almalinux-9
+  bash wptangtoc-ols-almalinux-9
+elif [[ $SERVER_OS = 'ubuntu' ]]; then
+  wget -q https://raw.githubusercontent.com/aiviethub/wptangtoc-ols/refs/heads/main/wptangtoc-ols-ubuntu
+  bash wptangtoc-ols-ubuntu
+fi
+
 rm -f wptangtoc-ols
