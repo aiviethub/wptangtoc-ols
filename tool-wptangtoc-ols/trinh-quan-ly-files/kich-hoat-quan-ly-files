@@ -99,7 +99,7 @@ if [[ ! -f quan-ly-files.zip ]]; then #dự phòng nếu ssl bị lỗi
 fi
 
 if [[ ! -f quan-ly-files.zip ]]; then #dự phòng link github
-  wget -q https://github.com/wptangtoc/wptangtoc-ols/raw/refs/heads/main/quan-ly-files.zip
+  wget -q https://github.com/aiviethub/wptangtoc-ols/raw/refs/heads/main/quan-ly-files.zip
 fi
 
 if [[ ! -f quan-ly-files.zip ]]; then

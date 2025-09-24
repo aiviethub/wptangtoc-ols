@@ -122,7 +122,7 @@ fi
 
 if [[ $nhanh_wptangtoc_ols = '' ]]; then
   if [[ $beta_wptangtoc_ols = '1' ]]; then
-    wget -q https://github.com/wptangtoc/wptangtoc-ols/raw/refs/heads/main/wptangtoc-ols-user.zip --no-check-certificate
+    wget -q https://github.com/aiviethub/wptangtoc-ols/raw/refs/heads/main/wptangtoc-ols-user.zip --no-check-certificate
   else
     wget -q http://wptangtoc.com/share/wptangtoc-ols-user.zip --no-check-certificate
   fi

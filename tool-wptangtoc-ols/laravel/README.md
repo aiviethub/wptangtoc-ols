@@ -138,7 +138,7 @@ chown -R user:user storage bootstrap/cache
 
 - Website: https://wptangtoc.com
 - Email: giatuan@wptangtoc.com
-- GitHub: https://github.com/wptangtoc/wptangtoc-ols
+- GitHub: https://github.com/aiviethub/wptangtoc-ols
 
 ## Changelog
 
