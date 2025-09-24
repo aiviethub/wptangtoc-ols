@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -15,7 +13,6 @@ function huong_dan() {
   * Bảo mật và hiệu suất: Giúp bạn sử dụng phiên bản PHP mới nhất, được hỗ trợ và bảo mật tốt hơn cho các website tương thích, trong khi vẫn duy trì hoạt động cho các website cũ hơn chưa thể nâng cấp ngay.
   * Tận dụng tính năng mới: Các phiên bản PHP mới thường đi kèm với các tính năng ngôn ngữ mới và cải tiến hiệu suất.
 
-  Bài viết kiểm tra hiệu suất PHP: https://wptangtoc.com/php-kiem-tra-toc-do-cac-phien-ban/
 }
 
 . /etc/wptt/.wptt.conf
@@ -273,7 +270,6 @@ fi
 if [[ $php_run_download ]]; then
   extensions=(common gd imagick process mbstring pdo mysqlnd xml opcache mcrypt imap bcmath intl zip mysql json curl pecl-igbinary igbinary)
 
-  # php_eol_list_check=$(curl -s https://wptangtoc.com/share/php-suport-OEL.txt)
 
   _runing "Tiến hành quét thư viện lưu trữ"
   if [[ $(dnf list available 2>/dev/null | grep "lsphp${php_ver_chon}") || $(apt list 2>/dev/null | grep "lsphp${php_ver_chon}") ]]; then #điều kiện PHP đang được hỗ trợ có sẵn trên repo
@@ -531,10 +527,7 @@ echo "-------------------------------------------------------------------------"
 echo -e "--------------------------------------------------------------------------${NC}"
 echo "-------------------------------------------------------------------------"
 echo "Cong cu WPTangToc OLS phat trien boi: Gia Tuan"
-echo "Yeu Cau Ho tro		: https://wptangtoc.com/lien-he/"
 echo "Giup chung toi luon giu WPTangToc OLS co the su dung mien phi bang cach dong gop vao"
-echo "Tai tro phat trien	: https://wptangtoc.com/donate/"
-echo "Huong dan		: https://wptangtoc.com/wptangtoc-ols-huong-dan"
 echo "-------------------------------------------------------------------------"
 
 check_menu_wptangtoc_active=$1

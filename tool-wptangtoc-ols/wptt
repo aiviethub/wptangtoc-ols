@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2024
 
 . /etc/wptt/echo-color
@@ -255,7 +253,6 @@ function version() {
   . /etc/wptt/.wptt.conf
   RED='\033[0;31m'
   NC='\033[0m'
-  local wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt)
   if [[ "$wptangtocols_version" != "$version_wptangtoc_ols" ]]; then
     clear
     echo "========================================================================="

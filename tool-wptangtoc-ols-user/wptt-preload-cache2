@@ -1,8 +1,6 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
-# @email: giatuan@wptangtoc.com
 
 function huong_dan(){
 Tính năng này giúp preload cache để cải thiện tốc độ load website.

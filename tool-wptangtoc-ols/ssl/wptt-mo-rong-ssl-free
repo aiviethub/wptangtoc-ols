@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -9,7 +8,6 @@ function huong_dan() {
   Về cơ bản, tính năng này cho phép bạn:
 
   Cài đặt SSL letsencrypt mở rộng kết hợp chứng chỉ của bạn trước sẵn có.
-  Giải thích: ví dụ bạn có domain là wptangtoc.com đã được cài chứng chỉ ssl letsencrypt trước đó giờ bạn muốn mở rộng thêm chứng chỉ sub.wptangtoc.com một chứng chỉ có thể hỗ trợ đồng thời cho 2 domain trở lên tận chí là nhiều hơn bạn muốn.
 
   Tóm lại: một chứng chỉ ssl chỉ dành cho một domain như thông lệ mà tính năng này giúp một chứng chỉ có thể dùng chung cho nhiều domain
 
@@ -61,7 +59,6 @@ if [[ ! -d /usr/local/lsws/$NAME/html ]]; then
   echoDo "Thu muc ma nguon tieu chuan cua WPTangToc OLS: /usr/local/lsws/$NAME/html khong hop le"
   echoDo "Nguyen nhan dan den viec nay co the ban da thay doi cau truc thu muc hoac su dung unikey de them tien mien"
   echoDo "Vui long kiem tra lai duong dan thu muc cua ban"
-  echoDo "Ho tro sua loi		: https://wptangtoc.com/lien-he/"
   exit
 fi
 
@@ -183,8 +180,6 @@ echoDone "Hoàn tất: chứng chỉ SSL được cài đặt thành công"
 
 echo "========================================================================="
 echo "Cong cu phat trien boi	: Gia Tuan"
-echo "Yeu Cau Ho tro		: wptangtoc.com/lien-he"
-echo "Tai tro phat trien	: wptangtoc.com/donate"
 echo "========================================================================="
 
 /usr/local/lsws/bin/lswsctrl restart >/dev/null 2>&1

@@ -63,12 +63,9 @@ if [[ "$ols1" = 'active' && "$mariadb1" = 'active' ]]; then
   echo 'Tình trang máy chủ	: Hoạt động tốt'
 else
   echo 'Tình trạng máy chủ	: máy chủ đang có vấn đề, cần phải khắc phục'
-  echo 'Yeu cau ho tro		: https://wptangtoc.com/lien-he'
 fi
 echo "System uptime	    	: $up"
 echo '-------------------------------------------------------------------------'
-echo 'Tăng tốc WordPress	: https://wptangtoc.com/blog'
-echo 'Nhà tài trợ chính	: wptangtoc.com'
 echo 'Phát triển bởi		: Gia Tuấn'
 echo '-------------------------------------------------------------------------'
 echo 'Nhập lệnh phím 1 để vào menu quản trị'

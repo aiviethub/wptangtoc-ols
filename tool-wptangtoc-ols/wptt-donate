@@ -43,10 +43,8 @@ echo -e "${RED}
 
 echo "$thay_mat_cong_dong_cam_on"
 
-curl https://wptangtoc.com/donate/ 2>/dev/null| grep '<h2 class'| head -1 |sed -e 's|</b>|-|g' -e 's|<[^>]*>||g'
 echo ''
 
-curl https://wptangtoc.com/donate/ 2>/dev/null| sed -e '/<li>/,/li>/!d' | sed '/footer/d' | sed '/div/d' | sed '/wptangtoc.com/d' | sed '/class/d' | sed '/^$/d' | sed '/wptangtoc/d' | sed '/dieu-khoan-dich-vu/d' | sed '/chinh-sach-thanh-toan/d' | sed '/tel:0/d' | sed 's/<li>//g' | sed 's/<\/li>//g' | sed '/html>/d'| sed '/Vui lòng ghi: nội dung/d' | sed -e 's|</b>|-|g' -e 's|<[^>]*>||g'
 
 echo ""
 echo ""

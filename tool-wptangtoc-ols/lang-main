@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 
 function huong_dan(){
 Tính năng Quản lý Ngôn ngữ trong WPTangToc OLS [nếu có] là một tùy chọn cho phép người dùng thay đổi ngôn ngữ hiển thị của chính giao diện script WPTangToc OLS. 🗣️

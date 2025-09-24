@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 unset khong_dau_vi_ngon_ngu wptangtocols_version ngon_ngu
 
@@ -51,7 +49,6 @@ rm -f wptangtoc-ols.zip
 if [[ $nhanh_wptangtoc_ols = "chinhthuc" ]]; then
   echo "Tiến hành chuyển đổi cài đặt WPTangToc OLS version ổn định"
   _runing "Cài đặt lại WPTangToc OLS"
-  wget -q https://wptangtoc.com/share/wptangtoc-ols.zip --no-check-certificate
   sed -i "/beta_wptangtoc_ols/d" /etc/wptt/.wptt.conf
   call='(chuyển đổi phiên bản ổn định)'
 fi
@@ -59,7 +56,6 @@ fi
 if [[ $nhanh_wptangtoc_ols = "beta" ]]; then
   echo "Tiến hành chuyển đổi cài đặt WPTangToc OLS version Beta"
   _runing "Cài đặt lại WPTangToc OLS"
-  wget -q https://wptangtoc.com/share/wptangtoc-ols-beta.zip --no-check-certificate -O wptangtoc-ols.zip
   sed -i "/beta_wptangtoc_ols/d" /etc/wptt/.wptt.conf
   echo "beta_wptangtoc_ols=1" >>/etc/wptt/.wptt.conf
   if [[ ! -f /tmp/beta-wptangtoc-check ]]; then
@@ -71,10 +67,8 @@ fi
 if [[ $nhanh_wptangtoc_ols = '' ]]; then
   if [[ $beta_wptangtoc_ols = '1' ]]; then
     echo "Tiến hành cài đặt lại WPTANGTOC version beta"
-    wget -q https://wptangtoc.com/share/wptangtoc-ols-beta.zip --no-check-certificate -O wptangtoc-ols.zip
   else
     echo "Tiến hành cài đặt lại WPTANGTOC version ổn định"
-    wget -q https://wptangtoc.com/share/wptangtoc-ols.zip --no-check-certificate
   fi
 fi
 
@@ -124,7 +118,6 @@ if [[ $nhanh_wptangtoc_ols = '' ]]; then
   if [[ $beta_wptangtoc_ols = '1' ]]; then
     wget -q https://github.com/aiviethub/wptangtoc-ols/raw/refs/heads/main/wptangtoc-ols-user.zip --no-check-certificate
   else
-    wget -q http://wptangtoc.com/share/wptangtoc-ols-user.zip --no-check-certificate
   fi
 
   unzip -qo wptangtoc-ols-user.zip
@@ -156,9 +149,7 @@ if [[ $nhanh_wptangtoc_ols = '' ]]; then
 fi
 
 if [[ $beta_wptangtoc_ols = '1' ]]; then
-  wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt?wptt-update-2-version-beta)
 else
-  wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt?wptt-update-2)
 fi
 
 if [[ $wptangtocols_version = "" ]]; then
@@ -166,9 +157,7 @@ if [[ $wptangtocols_version = "" ]]; then
 fi
 
 if [[ $key_activate ]]; then
-  wget -q https://key.wptangtoc.com/?${key_activate} -U "Activate key WPTangToc OLS" -O premium.zip
   if [[ ! -s premium.zip ]]; then
-    wget -q https://key.wptangtoc.com/?${key_activate} --no-check-certificate -U "Activate key WPTangToc OLS" -O premium.zip
   fi
 
   if [[ -s premium.zip ]]; then

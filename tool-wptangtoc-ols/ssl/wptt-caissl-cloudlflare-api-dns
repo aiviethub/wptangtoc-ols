@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 . /etc/wptt/.wptt.conf
 if [[ $ngon_ngu = '' ]]; then
@@ -41,7 +40,6 @@ if [[ ! -d /usr/local/lsws/$NAME/html ]]; then
   echoDo "Thu muc ma nguon tieu chuan cua WPTangToc OLS: /usr/local/lsws/$NAME/html khong hop le"
   echoDo "Nguyen nhan dan den viec nay co the ban da thay doi cau truc thu muc hoac su dung unikey de them tien mien"
   echoDo "Vui long kiem tra lai duong dan thu muc cua ban"
-  echoDo "Ho tro sua loi		: https://wptangtoc.com/lien-he/"
   exit
 fi
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 
 function huong_dan() {
   tính năng tài liệu hướng dẫn, thì đây là một phần rất quan trọng, đóng vai trò như sách hướng dẫn sử dụng hoặc trung tâm trợ giúp tích hợp, giúp người dùng hiểu và sử dụng công cụ một cách hiệu quả.

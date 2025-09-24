@@ -41,7 +41,6 @@ fi
 
 if [ "$NAME2" = "${NAME2/./}" ]; then
   clear
-  echo "Domain nhap khong dung dinh dang. Vi du: wptangtoc.com, abc.wptangtoc.com, wptangtoc.xyz..."
   exit
 fi
 

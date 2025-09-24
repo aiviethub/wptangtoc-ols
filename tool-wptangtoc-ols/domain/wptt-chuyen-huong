@@ -1,6 +1,5 @@
 #!/bin/bash
 # @since: 2025
-# @website: https://wptangtoc.com
 # @author: Gia Tuấn
 
 function huong_dan() {
@@ -48,7 +47,6 @@ if [[ $NAME = '' ]]; then
   export LANG=en_US.UTF-8
   stty iutf8 #từ latin1 sang utf8, nhiều khi anh em dùng bộ gõ tiếng việt: dùng à â nó thêm \xc3 hay \xa9 ... tương thích với bộ gõ tiếng việt telex khi nhập domain
   read -p "$nhap domain $ban_muon_chuyen_huong_di 
-    ($vi_du: wptangtoc.com, giatuan.com ...) [0=$exit_thoat]: " NAME
 fi
 
 #chuyển đổi viết hoa thành chữ thường điều kiện
@@ -82,7 +80,6 @@ fi
 
 if [[ $NAME2 = '' ]]; then
   read -p "$nhap domain $ban_muon_chuyen_huong_toi
-    ($vi_du: wptangtoc.com, wptangtoc.vn ...) [0=$exit_thoat]: " NAME2
 fi
 
 #chuyển đổi viết hoa thành chữ thường điều kiện

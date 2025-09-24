@@ -81,7 +81,6 @@ echo '                           ..:------:..
                        .:-==============-:.                       
                             .::::::::.                            
 '
-echo "Huong dan lay API va User ID cua telegram: https://wptangtoc.com/thiet-lap-telegram-chat-bot-cho-wptangtoc-ols/"
 echo "Xác nhân bạn có muốn thiết lập telegram không?:"
 prompt="Nhập lựa chọn của bạn [1-2]: "
 dongy="n"
@@ -133,7 +132,6 @@ if [[ "$dongy" = "y" ]]; then
 	text="
 	Cảm ơn bạn đã chọn WPTangToc OLS
 	WPTangToc OLS phiên bản : $version_wptangtoc_ols
-	Phát triển bởi [Gia Tuấn](https://wptangtoc.com/gia-tuan)
 	Bot thông báo máy chủ: $ip
 	"
 	url_tele="https://api.telegram.org/bot${telegram_api}/sendMessage"

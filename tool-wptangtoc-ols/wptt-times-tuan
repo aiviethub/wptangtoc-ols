@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 . /etc/wptt/.wptt.conf
 if [[ $ngon_ngu = '' ]];then

@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -84,7 +82,6 @@ if [[ $all_for = "" ]]; then
   echo "Hướng dẫn: "
   echo "Bước 1: hãy cd đi vào thư mục mã nguồn website của bạn muốn chuyển rồi"
   echo "Bước 2: Dán paste đoạn lệnh này vào terminal webserver cũ của bạn: "
-  echo "lệnh: curl -sO https://wptangtoc.com/share/wptt && bash wptt"
   echo ""
   echo "Bên webserver cũ thực thi chạy xong thì hãy quay lại về xác nhận làm bước tiếp theo"
   echo "Xác nhận đã hoàn tất chạy lệnh trên hoàn tất sao lưu dữ liệu webserver cũ và tiếp tục bước tiếp theo:"
@@ -253,7 +250,5 @@ if [[ "$all_for" = "" ]]; then
   echo "duong dan thu muc website	: /usr/local/lsws/$NAME/html              "
   echo "==================================================================="
   echo "Cong cu phat trien boi		: Gia Tuan"
-  echo "Yeu Cau Ho tro			: https://wptangtoc.com/lien-he"
-  echo "Ho tro phat trien		: https://wptangtoc.com/donate"
   echo "==================================================================="
 fi

@@ -9,7 +9,6 @@ stty iutf8 #từ latin1 sang utf8, nhiều khi anh em dùng bộ gõ tiếng vi�
 
 version_wptangtoc_ols=$(cat /tmp/wptangtoc-ols-version-main)
 
-wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt| head -1 | grep '\.')
 if [[ $wptangtocols_version = "" ]];then
 	wptangtocols_version=$(curl -s https://raw.githubusercontent.com/wptangtoc/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
 fi
@@ -23,7 +22,6 @@ echo "Chào mừng bạn đến với WPTangToc OLS"
 echo "-------------------------------------------------------------------------"
 echo ""
 read -p "Nhập domain hoặc subdomain bạn muốn thêm 
-(ví dụ: wptangtoc.com, abc.wptangtoc.com ...) : " NAME
 
 
 if [[ "$NAME" = "0" ]]; then
@@ -50,7 +48,6 @@ fi
 if [ "$NAME" = "${NAME/./}" ]; then
 	clear
 	. /etc/wptt/echo-color
-	echoDo "Domain bạn nhập không đúng định dạng. hãy nhập ví dụ: wptangtoc.com, abc.wptangtoc.com, wptangtoc.xyz..."
 	echoDo "vui lòng nhập lại..."
 	sleep 4
 	. /etc/wptt/domain/wptt-thay-domain-chinh-wptangtoc-ols-com
@@ -63,7 +60,6 @@ fi
 if [ $(echo $NAME | wc -w) -gt 1 ];then
 	clear
 	. /etc/wptt/echo-color
-	echoDo "Domain bạn nhập không đúng định dạng. hãy nhập ví dụ: wptangtoc.com, abc.wptangtoc.com, wptangtoc.xyz..."
 	echoDo "vui lòng nhập lại..."
 	sleep 4
 	. /etc/wptt/domain/wptt-thay-domain-chinh-wptangtoc-ols-com
@@ -144,7 +140,6 @@ rm -rf /wptangtoc-ols/wptangtoc-ols.com >/dev/null 2>&1
 
 echo "-------------------------------------------------------------------------"
 echo "Chào mừng bạn đến với WPTangToc OLS"
-echo "Phần mềm phát triển bởi Gia Tuấn (wptangtoc.com)"
 echo '-------------------------------------------------------------------------'
 echo "Nhập lệnh phím 1 để vào menu quản trị"
 echo '-------------------------------------------------------------------------'

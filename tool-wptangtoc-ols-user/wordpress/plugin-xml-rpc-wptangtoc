@@ -56,7 +56,6 @@ done
 
 if [[ "$check" = "y" ]]; then
 	_runing "Tắt xml rpc WordPress cho website $NAME"
-    wp plugin install https://wptangtoc.com/share/xml-rpc-wptangtoc.zip --path=/usr/local/lsws/"$NAME"/html --activate >/dev/null 2>&1
 	_rundone "Tắt xml rpc WordPress cho website $NAME"
 fi
 check_menu_wptangtoc_active=$1

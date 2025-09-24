@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2024
 function huong_dan(){
 Đây là tính năng giúp tạm khoá website

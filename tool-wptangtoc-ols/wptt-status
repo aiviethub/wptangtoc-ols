@@ -203,14 +203,10 @@ if [[ -n "$ols1" ]] && [[ "$mariadb1" = 'active' ]]; then
   echo "$tinh_trang_may_chu	: $hoat_dong_tot"
 else
   echo "$tinh_trang_may_chu	: $may_chu_dang_gap_van_de"
-  echo "$yeu_cau_ho_tro		: https://wptangtoc.com/lien-he"
 fi
 echo "System uptime	    	: $up"
 echo '-------------------------------------------------------------------------'
-echo "$tang_toc_wordpress	: https://wptangtoc.com/blog"
-echo "$nha_tai_tro_chinh	: wptangtoc.com"
 echo "$phat_trien_boi		: Gia Tuấn"
-#echo "Khoá đào tạo nâng cao		: https://wptangtoc.com/dao-tao/"
 echo '-------------------------------------------------------------------------'
 echo "$nhap_lenh_phim_1_de_vao_menu_quan_tri"
 if [[ $(which fzf 2>/dev/null) ]]; then
@@ -268,7 +264,6 @@ Website: $(
 -------------------------------------
 Cảm ơn bạn đã chọn WPTangToc OLS
 WPTangToc OLS phiên bản : $version_wptangtoc_ols
-Phát triển bởi [Gia Tuấn](https://wptangtoc.com/gia-tuan)
 "
   url_tele="https://api.telegram.org/bot${telegram_api}/sendMessage"
   curl -s -d "chat_id=$telegram_id&text=${text}&disable_web_page_preview=true&parse_mode=markdown" $url_tele >/dev/null

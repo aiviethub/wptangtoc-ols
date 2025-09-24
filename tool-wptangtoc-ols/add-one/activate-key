@@ -13,7 +13,6 @@ function huong_dan() {
 
   Key này được áp dụng cho một máy chủ [VPS] và không giới hạn số lần sử dụng trên máy chủ đó. Thời gian sử dụng bản quyền [thường theo tháng hoặc năm] bắt đầu được tính từ khi key được kích hoạt trên VPS, không phải từ thời điểm mua. Việc mua và sử dụng active key WPTangToc OLS Premium cũng đồng nghĩa với việc người dùng đóng góp vào sự phát triển của dự án mã nguồn mở WPTangToc OLS.
 
-  Link tham khảo: https://wptangtoc.com/wptangtoc-ols-premium/
 }
 
 export LANG=en_US.UTF-8
@@ -90,7 +89,6 @@ Thời gian sẽ được tính bắt đầu khi bạn được activate key và
 =====================================================
 Số điện thoại Tác giả: 0866880462
 "
-  echo "Tham khảo chi tiết: https://wptangtoc.com/wptangtoc-ols-premium/"
   echo "==============================================="
   read -p "Nhập Key license activate WPTangToc OLS Premium [0=Thoát]: " key
 fi
@@ -110,12 +108,9 @@ fi
 
 cd
 
-wget -q https://key.wptangtoc.com/?${key} -U "Activate key WPTangToc OLS" -O premium.zip
 if [[ ! -s premium.zip ]]; then
-  wget -q https://key.wptangtoc.com/?${key} --no-check-certificate -U "Activate key WPTangToc OLS" -O premium.zip
 fi
 
-# curl -s https://key.wptangtoc.com/?${key}
 
 #kiểm tra tồn tại không rỗng
 if [[ -s premium.zip ]]; then
@@ -135,7 +130,6 @@ if [[ -s premium.zip ]]; then
   fi
 
   cat >"/etc/cron.d/key-activate-wptangtoc.crond" <<END
-$phut $gio * * $tuan root wget -q -O - https://key.wptangtoc.com/?${key} -U "Activate key date WPTangToc OLS" | bash >/dev/null 2>&1
 END
 
   if $(cat /etc/*release | grep -q "Ubuntu"); then

@@ -13,7 +13,6 @@ Mục Đích Chính
  * Quản lý tiến trình cơ bản: Cho phép bạn thực hiện một số hành động như kill [dừng] một tiến trình hoặc renice [thay đổi độ ưu tiên] một cách tương tác.
  * Hiểu về tải hệ thống: Cung cấp thông tin về mức độ bận rộn của CPU và bộ nhớ.
 
-Hướng dẫn cách xem lệnh top: https://wptangtoc.com/kiem-tra-tai-nguyen-linux-top/
 }
 
 echo "========================================================================="

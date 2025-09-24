@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 function huong_dan(){
@@ -82,7 +81,6 @@ echo "========================================================================="
 echo "Xoa alias thành công                         "
 echo "========================================================================="
 echo "Cong cu phat trien boi: Gia Tuan"
-echo "Ho tro phat trien: https://wptangtoc.com/donate"
 echo "========================================================================="
 
 check_menu_wptangtoc_active=$1

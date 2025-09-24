@@ -24,7 +24,6 @@ echo "|$chuyen_tat_ca_website_wptangtoc_ve_wptangtoc_ols	                  |"
 echo "========================================================================="
 echo "Ghi chú: Tính năng này chỉ hỗ trợ chuyển từ wptangtoc ols qua wptantoc ols với nhau"
 echo "Dán paste đoạn lệnh này vào terminal SSH webserver cũ của bạn để sao lưu toàn bộ bên hệ thống cũ: "
-echo "Lệnh: curl -sO https://wptangtoc.com/share/wptt-all && bash wptt-all"
 echo ""
 read -p "Xác nhận đã hoàn tất chạy lệnh trên sao lưu dữ liệu bên webserver cũ và tiếp tục chạy (y/n): " dongy
 

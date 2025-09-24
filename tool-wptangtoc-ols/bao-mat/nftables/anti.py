@@ -70,5 +70,4 @@ def process_access_logs(log_file_path): #Renamed function
                     blocked_ip_ranges.add(cidr_range)
 
 if __name__ == '__main__':
-    log_file_path = "/usr/local/lsws/wptangtoc.com/logs/access.log"
     process_access_logs(log_file_path)

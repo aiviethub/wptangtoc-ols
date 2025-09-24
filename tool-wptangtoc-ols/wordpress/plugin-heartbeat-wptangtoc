@@ -14,7 +14,6 @@ function huong_dan() {
 
   Tóm lại: Tính năng Tối ưu Heartbeat API trong WPTangToc OLS là một công cụ hữu ích giúp bạn kiểm soát các yêu cầu AJAX do WordPress tạo ra, nhằm giảm tải cho máy chủ và tăng tốc độ khu vực quản trị một cách hiệu quả.
 
-  link tham khảo chi tiết: https://wptangtoc.com/wordpress-heartbeat-api/
 }
 
 echo ""
@@ -93,7 +92,6 @@ done
 if [[ "$check" = "y" ]]; then
   _runing "Tối ưu heartbeat API"
   . /etc/wptt/php/php-cli-domain-config $NAME
-  /usr/local/lsws/lsphp${phien_ban_php_domain_thuc_thi}/bin/php /usr/local/bin/wp plugin install https://wptangtoc.com/share/heartbeat-wptangtoc.zip --path=/usr/local/lsws/$NAME/html --activate --allow-root
   . /etc/wptt/vhost/.$NAME.conf
   chown -R $User_name_vhost:$User_name_vhost /usr/local/lsws/$NAME/html/wp-content/plugins/heartbeat-wptangtoc
   _rundone "Tối ưu heartbeat API"

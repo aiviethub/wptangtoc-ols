@@ -74,7 +74,6 @@ fi
 
       echo ""
       read -p "4. Nhập Email của website $domain
-ví dụ abc@gmail.com, giatuan@wptangtoc.com: " emailwp
       if [ "$emailwp" = "${emailwp/@/}" ]; then
         clear
         echo "Email không đúng định dạng."

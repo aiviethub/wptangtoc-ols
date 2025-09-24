@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -52,7 +50,6 @@ fi
 # 	fi
 # fi
 
-php_eol_list_check=$(curl -s https://wptangtoc.com/share/php-suport-OEL.txt)
 _runing "$dang_tien_hanh $quet extension $(echo $LSPHP | grep -Eo '[0-9]{1,2}' | head -1 | perl -pe 's/(\d{1})(?=(?:\d{1}){1,5}\b)/\1./g' | sed 's/^/PHP /g')"
 
 #yum clean all để search cho update cập nhật

@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -33,7 +32,6 @@ fi
 
 . /etc/wptt/.wptt.conf
 read -p "Nhập domain mới bạn muốn thêm alias vào 
-    (vidu: wptangtoc.com, abc.wptangtoc.com ...) [0=Thoat]: " NAME2
 
 if [[ "$NAME2" = "0" ]]; then
   clear
@@ -143,7 +141,6 @@ echo "========================================================================="
 echo "Đã cài đặt thành công $NAME2 Parked alias $NAME                   "
 echo "========================================================================="
 echo "Phần mềm phát triển bởi: Gia Tuấn"
-echo "Hỗ trợ phát triển: https://wptangtoc.com/donate"
 echo "========================================================================="
 checkdns=$(host $NAME2 | grep -Eo -m 1 '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
 if [[ "$checkdns" = "" ]]; then

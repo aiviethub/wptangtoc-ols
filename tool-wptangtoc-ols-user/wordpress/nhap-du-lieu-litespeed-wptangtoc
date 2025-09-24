@@ -85,9 +85,7 @@ if [[ -d "$pathcheckplugin" ]]; then
   sed -i "/WP_CACHE/d" /usr/local/lsws/"$NAME"/html/wp-config.php
   rm -rf /usr/local/lsws/"$NAME"/html/wp-content/cache
   rm -f /usr/local/lsws/"$NAME"/html/wp-content/object-cache.php
-  cd "$path" && wget -q https://wptangtoc.com/share/$data_wptangtoc
   if [[ ! -f $data_wptangtoc ]]; then
-    wget -q https://wptangtoc.com/share/$data_wptangtoc --no-check-certificate
   fi
   wp plugin activate litespeed-cache --allow-root --path="$path" >/dev/null 2>&1
   wp litespeed-option import $data_wptangtoc --path="$path" --allow-root >/dev/null 2>&1

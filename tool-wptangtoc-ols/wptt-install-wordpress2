@@ -307,14 +307,12 @@ $luu_y_nhap_wordpress_it_nhat_12_ky_tu: "
 
       echo ""
       read -p "4. $nhap Email website $domain
-ví dụ abc@gmail.com, giatuan@wptangtoc.com: " emailwp
       while [ "$emailwp" = "${emailwp/@/}" ]; do
         clear
         . /etc/wptt/echo-color
         echoDo "$email_khong_dung_dinh_dang"
         echo "Vui lòng nhập lại địa chỉ email"
         read -p "4. $nhap Email website $domain
-ví dụ abc@gmail.com, giatuan@wptangtoc.com: " emailwp
       done
 
       _runing "$thiet_lap WordPress"

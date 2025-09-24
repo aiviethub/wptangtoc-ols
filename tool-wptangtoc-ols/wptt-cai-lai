@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 . /etc/wptt/.wptt.conf
@@ -35,7 +34,6 @@ else
 fi
 
 yum install openlitespeed -y --nogpgcheck
-wget -q https://wptangtoc.com/share/wptangtoc-ols.zip
 unzip -oq wptangtoc-ols.zip
 \cp -rf tool-wptangtoc-ols/* /etc/wptt/
 rm -f wptangtoc-ols.zip
@@ -127,7 +125,6 @@ if [ "$(ls -A /etc/wptt/vhost | sort -uV)" ]; then
   echo
 fi
 
-wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt)
 sed -i "/version_wptangtoc_ols/d" /etc/wptt/.wptt.conf
 echo "version_wptangtoc_ols=$wptangtocols_version" >>/etc/wptt/.wptt.conf
 RED='\033[0;31m'
@@ -157,10 +154,7 @@ echo "-------------------------------------------------------------------------"
 echo -e "--------------------------------------------------------------------------${NC}"
 echo "-------------------------------------------------------------------------"
 echo "Cong cu WPTangToc OLS phat trien boi: Gia Tuan"
-echo "Yeu Cau Ho tro		: https://wptangtoc.com/lien-he/"
 echo "Giup chung toi luon giu WPTangToc OLS co the su dung mien phi bang cach dong gop vao"
-echo "Tai tro phat trien	: https://wptangtoc.com/donate/"
-echo "Huong dan		: https://wptangtoc.com/wptangtoc-ols-huong-dan"
 echo "-------------------------------------------------------------------------"
 echo "reboot lai websever"
 echo "-------------------------------------------------------------------------"

@@ -13,8 +13,6 @@ ip=$(curl -sf --connect-timeout 5 --max-time 10 https://ipv4.icanhazip.com || cu
 #IP Webserver của bạn, trường hợp cài vDDOS chung 1 VPS với Webserver thì để 127.0.0.1 và để 2 Port 80, 443. Trường hợp vDDOS cài ở Server khác, thì thay 127.0.0.1 thành IP của Webserver hiện tại của bạn, nếu khác server thì dùng ip public, hoặc dùng ip mạng lan thì hiệu suất ngon hơn, ngon nhất thì dùng trong nội bộ
 
 echo '# Website       Listen               Backend                  Cache Security SSL-Prikey   SSL-CRTkey
-wptangtoc.com         http://0.0.0.0:80    http://127.0.0.1:880    yes    high      no           no
-wptangtoc.com         https://0.0.0.0:443  https://127.0.0.1:8443   yes    high      /etc/letsencrypt/live/wptangtoc.com/privkey.pem /etc/letsencrypt/live/wptangtoc.com/fullchain.pem' > /vddos/conf.d/website.conf
 
 /usr/bin/vddos start
 /usr/bin/vddos restart

@@ -1,8 +1,6 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
-# @email: giatuan@wptangtoc.com
 
 function huong_dan() {
   Tính năng Preload Cache [Tải trước bộ nhớ đệm] là một kỹ thuật chủ động tạo và lưu trữ các phiên bản đã được cache [lưu tạm] của các trang web [hoặc các tài nguyên khác] trước khi có bất kỳ người dùng nào thực sự truy cập vào những trang đó.

@@ -98,13 +98,11 @@ Luu y: Hãy nhập ít nhất 12 ký tự để nâng cao bảo mật: "
 
       echo ""
       read -p "4. Nhập Email của website $domain
-ví dụ abc@gmail.com, giatuan@wptangtoc.com: " emailwp
       if [ "$emailwp" = "${emailwp/@/}" ]; then
         clear
         echo "Email không đúng định dạng."
         echo "Vui lòng nhập lại email của bạn"
         read -p "4. Nhập Email của website $domain
-ví dụ abc@gmail.com, giatuan@wptangtoc.com: " emailwp
         if [ "$emailwp" = "${emailwp/@/}" ]; then
           echo "Email không đúng định dạng."
           exit

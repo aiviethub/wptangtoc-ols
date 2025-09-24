@@ -3,9 +3,6 @@
 
 echo "🔄 Đang cập nhật thứ tự ưu tiên link download..."
 
-# Thay đổi pattern: GitHub làm link chính, wptangtoc.com làm link dự phòng
-# Pattern 1: wget wptangtoc.com -> wget GitHub
-# Pattern 2: if [[ ! -f wptangtoc-ols.zip ]]; then wget wptangtoc.com -> if [[ ! -f wptangtoc-ols.zip ]]; then wget GitHub
 
 # Tìm tất cả file .sh và thay đổi
 find /root/aiviethub -name "*.sh" -type f | while read file; do
@@ -29,4 +26,3 @@ find /root/aiviethub -name "*.sh" -type f | while read file; do
 done
 
 echo "✅ Hoàn thành cập nhật thứ tự ưu tiên link download!"
-echo "📋 GitHub giờ đây là link chính, wptangtoc.com là link dự phòng"

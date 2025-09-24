@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 
@@ -106,8 +105,6 @@ systemctl restart mariadb.service >/dev/null 2>&1
     echo "database_password       : $password"
     echo "==================================================================="
     echo "Cong cu phat trien boi	: Gia Tuan"
-    echo "Yeu Cau Ho tro		: wptangtoc.com/lien-he"
-    echo "Tai tro phat trien	: wptangtoc.com/donate"
 fi
 
 

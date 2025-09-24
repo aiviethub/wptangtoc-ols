@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -57,7 +55,6 @@ NAME=$(echo $NAME | tr '[:upper:]' '[:lower:]') #chuyển viết hoa thành vi�
 if [[ $2 = '' ]]; then
   stty iutf8 #từ latin1 sang utf8, nhiều khi anh em dùng bộ gõ tiếng việt: dùng à â nó thêm \xc3 hay \xa9 ... tương thích với bộ gõ tiếng việt telex khi nhập domain
   read -p "Nhập domain hoac subdomain bạn muốn thêm và sao chép vào
-    (vidu: wptangtoc.com, abc.wptangtoc.com ...) [0=Thoat]: " NAME2
 fi
 
 if [ "$NAME2" = '' ]; then

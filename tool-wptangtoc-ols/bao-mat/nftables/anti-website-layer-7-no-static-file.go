@@ -14,7 +14,6 @@ import (
 
 // --- CẤU HÌNH ---
 const (
-	logFile       = "/usr/local/lsws/wptangtoc.com/logs/access.log"
 	nftFamily     = "ip"           
 	nftTableName  = "blackblock"   
 	nftSetName    = "blackaction"  

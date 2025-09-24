@@ -93,9 +93,7 @@ password_quan_ly_file=$(
 )
 
 cd /usr/local/lsws/$NAME/html
-wget -q https://wptangtoc.com/share/quan-ly-files.zip
 if [[ ! -f quan-ly-files.zip ]]; then #dự phòng nếu ssl bị lỗi
-  wget -q https://wptangtoc.com/share/quan-ly-files.zip --no-check-certificate
 fi
 
 if [[ ! -f quan-ly-files.zip ]]; then #dự phòng link github

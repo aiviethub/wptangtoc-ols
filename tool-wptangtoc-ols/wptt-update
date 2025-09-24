@@ -37,7 +37,6 @@ echo "..."
 sleep 2
 echo ".."
 echo "/-----------------------------------------------------------------------/"
-wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt?domain-update="$Website_chinh")
 
 if [[ $wptangtocols_version = '' ]]; then
   echoDo "$da_xay_ra_loi_vui_long_thu_lai_sau"
@@ -111,15 +110,11 @@ else
     rm -f wptangtoc-ols-user.zip
 
     #download https
-    wget -q https://wptangtoc.com/share/wptangtoc-ols.zip
-    wget -q https://wptangtoc.com/share/wptangtoc-ols-user.zip
 
     #download dự phòng http
     if [[ ! -f wptangtoc-ols.zip ]]; then
-      wget -q http://wptangtoc.com/share/wptangtoc-ols.zip --no-check-certificate
     fi
     if [[ ! -f wptangtoc-ols-user.zip ]]; then
-      wget -q http://wptangtoc.com/share/wptangtoc-ols-user.zip --no-check-certificate
     fi
 
     if [[ ! -f wptangtoc-ols.zip ]]; then
@@ -226,9 +221,7 @@ else
     fi
 
     if [[ $key_activate ]]; then
-      wget -q https://key.wptangtoc.com/?${key_activate} -U "Activate key WPTangToc OLS" -O premium.zip
       if [[ ! -s premium.zip ]]; then
-        wget -q https://key.wptangtoc.com/?${key_activate} --no-check-certificate -U "Activate key WPTangToc OLS" -O premium.zip
       fi
 
       if [[ -s premium.zip ]]; then
@@ -255,7 +248,6 @@ else
 
     echo "$dang_tien_hanh_cap_nhat_vui_long_doi"
     sleep 2
-    curl -sO https://wptangtoc.com/share/update && bash update
     rm -f update
     sed -i "/version_wptangtoc_ols/d" /etc/wptt/.wptt.conf
     echo "version_wptangtoc_ols=$wptangtocols_version" >>/etc/wptt/.wptt.conf

@@ -1,6 +1,5 @@
 #!/bin/bash
 # @since: 2024
-# @website: https://wptangtoc.com
 # @author: Gia Tuấn
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -24,7 +23,6 @@ echo ""
 . /etc/wptt/.wptt.conf
 . /etc/wptt/echo-color
 read -p "$nhap domain $ban_muon_chuyen_huong_di 
-    ($vi_du: wptangtoc.com, giatuan.com ...) [0=$exit_thoat]: " NAME
 
 if [[ "$NAME" = "0" ]]; then
   clear
@@ -33,7 +31,6 @@ if [[ "$NAME" = "0" ]]; then
 fi
 
 read -p "$nhap domain $ban_muon_chuyen_huong_toi
-    ($vi_du: wptangtoc.com, wptangtoc.vn ...) [0=$exit_thoat]: " NAME2
 
 USER=${NAME//[-._]/}
 

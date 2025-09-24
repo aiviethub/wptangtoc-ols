@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -17,7 +15,6 @@ function huong_dan() {
 
   Key này được áp dụng cho một máy chủ [VPS] và không giới hạn số lần sử dụng trên máy chủ đó. Thời gian sử dụng bản quyền [thường theo tháng hoặc năm] bắt đầu được tính từ khi key được kích hoạt trên VPS, không phải từ thời điểm mua. Việc mua và sử dụng active key WPTangToc OLS Premium cũng đồng nghĩa với việc người dùng đóng góp vào sự phát triển của dự án mã nguồn mở WPTangToc OLS.
 
-  Link tham khảo: https://wptangtoc.com/wptangtoc-ols-premium/
 }
 
 if [[ $1 = "" ]]; then

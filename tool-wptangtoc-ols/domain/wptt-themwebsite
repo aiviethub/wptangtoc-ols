@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2025
 
 function huong_dan() {
@@ -64,7 +63,6 @@ fi
 
 if [[ $NAME = "" ]]; then
   read -p "$nhap domain $hoac subdomain $ban_muon_them 
-	($vi_du: wptangtoc.com, abc.wptangtoc.com ...) [0=$exit_thoat]: " NAME
 fi
 
 if [[ "$NAME" = "0" ]]; then
@@ -200,7 +198,6 @@ if [[ $(cat /etc/passwd | cut -f1 -d ':' | grep -w $USER) = '' ]]; then
   exit
 fi
 
-version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt?domain-them=$NAME)
 echo "virtualhost $NAME {
 vhRoot                  /usr/local/lsws/$NAME/
 configFile              /usr/local/lsws/conf/vhosts/$NAME/$NAME.conf

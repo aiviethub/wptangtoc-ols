@@ -1,6 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
 # @since: 2022
 echo ""
 echo ""
@@ -76,9 +75,7 @@ if [[ -d "$pathcheckplugin" ]]; then
     rm -rf /usr/local/lsws/"$NAME"/html/wp-content/cache
     rm -f /usr/local/lsws/"$NAME"/html/wp-content/object-cache.php
 
-    cd "$path" && wget https://wptangtoc.com/share/$data_wptangtoc
     if [[ ! -f $path/$data_wptangtoc ]]; then
-      cd "$path" && wget -q https://wptangtoc.com/share/$data_wptangtoc --no-check-certificate
     fi
 
     wp plugin activate litespeed-cache --allow-root --path="$path"
@@ -137,7 +134,6 @@ rm -f /usr/local/lsws/"$NAME"/html/wp-content/object-cache.php
 wp plugin install litespeed-cache --activate --allow-root --path="$path"
 echo "Hoan tat tai plugin LiteSpeed cache va kich hoat"
 echo "Dang toi uu theo cach cua wptangtoc"
-cd "$path" && wget https://wptangtoc.com/share/$data_wptangtoc
 wp litespeed-option import $data_wptangtoc --path="$path" --allow-root
 rm -f $data_wptangtoc
 ip=$(curl -skf --connect-timeout 5 --max-time 10 https://ipv4.icanhazip.com | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' || curl -skf --connect-timeout 5 --max-time 10 https://checkip.amazonaws.com | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
@@ -152,8 +148,6 @@ wp rewrite flush --allow-root --path="$path"
 echo "==================================================================="
 echo "Hoan tat qua trinh tai plugin Litespeed va tu dong toi uu hoa"
 echo "Cong cu phat trien boi	: Gia Tuan"
-echo "Yeu Cau Ho tro		: wptangtoc.com/lien-he"
-echo "Tai tro phat trien	: wptangtoc.com/donate"
 echo "==================================================================="
 check_menu_wptangtoc_active=$1
 if [[ $check_menu_wptangtoc_active = "98" ]]; then

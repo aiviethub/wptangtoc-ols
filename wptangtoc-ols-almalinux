@@ -1,7 +1,5 @@
 #!/bin/bash
 # @author: Gia Tuấn
-# @website: https://wptangtoc.com
-# @email: giatuan@wptangtoc.com
 # @since: 2025
 
 export LC_ALL=en_US.UTF-8
@@ -9,7 +7,6 @@ export LANG=en_US.UTF-8
 stty iutf8 #từ latin1 sang utf8, nhiều khi anh em dùng bộ gõ tiếng việt: dùng à â nó thêm \xc3 hay \xa9 ... tương thích với bộ gõ tiếng việt telex khi nhập domain
 
 read -p "Nhập domain hoặc subdomain bạn muốn thêm 
-    (ví dụ: wptangtoc.com, abc.wptangtoc.com ...) [Enter = Bỏ Qua]: " NAME
 
 if [[ $NAME = '' ]]; then
   NAME='wptangtoc-ols.com'
@@ -25,9 +22,7 @@ if [[ "$check_root" != "root" ]]; then
     if [[ $check_root_2 != 'root' ]]; then
       echo "Vui lòng sử dụng tài khoản root để cài đặt chương trình WPTangToc OLS"
       echo "Vui lòng chuyển sang user Root. Vui lòng chạy lại lệnh cài đặt."
-      echo "Hướng dẫn login tài khoản root: https://wptangtoc.com/wptangtoc-ols-cau-hoi-thuong-gap/#Yeu_cau_tai_khoan_root_moi_cai_duoc_wptangtoc_ols"
       echo "Khi hoàn tất thì hãy chạy lại lệnh:"
-      echo "curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols"
       rm -f wptangtoc-ols
       exit
     fi
@@ -52,7 +47,6 @@ fi
 
 if [ "$NAME" = "${NAME/./}" ]; then
   clear
-  echo "Domain bạn nhập không đúng định dạng. hãy nhập ví dụ: wptangtoc.com hoặc abc.wptangtoc.com hoặc wptangtoc.xyz..."
   rm -f wptangtoc-ols
   exit
 fi
@@ -60,7 +54,6 @@ fi
 #domain người dùng nhập sử dụng thêm space cách, sẽ báo không đúng định dạng
 if [ $(echo $NAME | wc -w) -gt 1 ]; then
   clear
-  echo "Domain bạn nhập không đúng định dạng. hãy nhập ví dụ: wptangtoc.com hoặc abc.wptangtoc.com hoặc wptangtoc.xyz..."
   rm -f wptangtoc-ols
   exit
 fi
@@ -89,7 +82,6 @@ LC_ALL=en_US.utf-8
 END
 fi
 
-wptangtocols_version=$(curl -s https://wptangtoc.com/share/version-wptangtoc-ols.txt?domain-install=$NAME)
 
 if [[ $wptangtocols_version = "" ]]; then
   wptangtocols_version=$(curl -s https://raw.githubusercontent.com/wptangtoc/wptangtoc-ols/refs/heads/main/version-wptangtoc-ols.txt)
@@ -301,7 +293,6 @@ while [[ $wptangtoc_ols_nhanh = '2' && $key = '' ]]; do
 
   if [[ $wptangtoc_ols_nhanh = '2' ]]; then
     unset check_key
-    check_key=$(curl -s https://key.wptangtoc.com/?${key} -A "check key activate wptangtoc ols install")
     if [[ $check_key = '' ]]; then
       echo "Key không hợp lệ, vui lòng thử lại"
       unset key
@@ -334,7 +325,6 @@ if [[ "$wordpress" = "wp" ]]; then
 		Luu y: hay nhap wordpress it nhat 26 ky tu de nang cao bao mat (Password khi gõ sẽ ẩn): " mypassword
     echo ""
     read -p "4. Nhap Email ban cua website $NAME
-		vi du abc@gmail.com, giatuan@wptangtoc.com: " emailwp
     if [ "$emailwp" = "${emailwp/@/}" ]; then
       clear
       echo "Email khong dung dinh dang."
@@ -2164,10 +2154,7 @@ if [[ $NAME != 'wptangtoc-ols.com' ]]; then
   echo "-------------------------------------------------------------------------"
 fi
 echo "WPTangToc OLS phát triển bởi: Gia Tuấn"
-echo "Liên hệ với tác giả 	: https://wptangtoc.com/lien-he/"
-echo "Nhật ký thay đổi 	: https://wptangtoc.com/changelog-wptangtoc-ols/"
 echo "Thay mặt cộng đồng sử dụng phần mềm wptangtoc ols biết ơn các nhà tài trợ dưới đây:"
-echo "Các nhà tài trợ 		: https://wptangtoc.com/donate/"
 echo "-------------------------------------------------------------------------"
 echo "Đang kiểm tra hệ thống của bạn..."
 sleep 1
