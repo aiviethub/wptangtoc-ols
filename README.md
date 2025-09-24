@@ -48,9 +48,11 @@ Hệ điều hành mà mình yêu thích nhất là AlmaLinux 8:
 Bạn paste đoạn mã này vào terminal của bạn rồi phần mềm sẽ tự động thiết lập.
 
 
+<pre>curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols</pre>
 
 Nếu bạn muốn cài đặt luôn sẵn mã nguồn WordPress vào domain luôn thì có thể dùng đoạn này:
 
+<pre>curl -sO https://wptangtoc.com/share/wptangtoc-ols && bash wptangtoc-ols wp</pre>
 
 Nếu bạn chưa có VPS: thì bạn có thể tìm kiếm một đơn vị cung cấp VPS nào đó mà bạn cảm thấy uy tín bạn có thể thuê ở đó. Để có thể sử dụng công cụ này.
 
@@ -109,6 +111,7 @@ Ubuntu 24.04 (Hỗ trợ x86_64 & arm)
 
 <h3>Hướng dẫn sử dụng</h3>
 
+Vui lòng truy cập: <a href="https://wptangtoc.com/wptangtoc-ols/">https://wptangtoc.com/wptangtoc-ols/</a>
 
 <h3>Các nguồn hỗ trợ cho WPTangToc OLS</h3>
 
@@ -127,11 +130,14 @@ Ubuntu 24.04 (Hỗ trợ x86_64 & arm)
 
 <h3>Liên hệ với tác giả</h3>
 <ul>
+<li>Trang chủ: <a href="https://wptangtoc.com">WP Tăng Tốc</a></li>
+<li>Email: <a href="mailto:giatuan@wptangtoc.com">giatuan@wptangtoc.com</a></li>
 <li>Số Điện Thoại: 0866880462</li>
 </ul>
 
 <h3>Tác giả phần mềm</h3>
 <ul>
+<li>Người phát triển dự án : <a href="https://wptangtoc.com/gia-tuan/">Gia Tuấn</a> và cộng đồng Tăng Tốc WordPress</li>
 </ul>
 
 <h3>Thảo luận giải đáp các thắc mắc: </h3>
@@ -143,6 +149,7 @@ Ubuntu 24.04 (Hỗ trợ x86_64 & arm)
 
 <h3>ChangeLog: </h3>
 <ul>
+<li>Nhật ký cập nhật phát triển : <a href="https://wptangtoc.com/changelog-wptangtoc-ols/">Changelog – WPTangToc OLS</a></li>
 </ul>
 
 
@@ -202,6 +209,7 @@ Hỗ trợ phát triển phần mềm WPTangToc OLS. rất biết ơn sự đón
 <br>
 <br>
 Bánh mì trên bàn không phải là miễn phí, mặc dù phần mềm này miễn phí, và sẽ luôn như vậy. Mình thích phát triển phần mềm này và hỗ trợ các bạn, nhưng mình cũng cần bánh mì. Vui lòng tạo điều kiện để tôi tiếp tục nỗ lực vào phần mềm này:<br>
+<a href="https://wptangtoc.com/donate">Tài trợ tặng bánh mì</a>
 
 
 <h3>License: GPLv3</h3>

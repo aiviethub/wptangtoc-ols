@@ -79,6 +79,7 @@ compressArchive         1
       fi
 
       if [[ -f "$path/wp-config.php" ]]; then
+        cd $path && curl -sO https://wptangtoc.com/giatuan/wptt-import-db && bash wptt-import-db
         rm -f $path/giatuan-wptangtoc.sql
       fi
     done
